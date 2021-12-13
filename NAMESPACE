@@ -1,2 +1,3 @@
 exportPattern("^[[:alpha:]]+")
 import(websocket)
+import(future)
