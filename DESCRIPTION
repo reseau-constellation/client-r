@@ -11,11 +11,14 @@ URL: https://github.com/reseau-constellation/client-r
 BugReports: https://github.com/reseau-constellation/issues
 Imports:
     websocket (>= 1.4.1),
-    future (>= 1.23.0)
+    future (>= 1.23.0),
+    promises,
+    R6,
+    uuid
 Language: fr
 Encoding: UTF-8
 LazyData: true  
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3

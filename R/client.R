@@ -1,0 +1,162 @@
+Client <- R6Class(
+  "ClientConstellation",
+  private = list(
+    écouteurs = list(),
+    envoyerMessage = function(m) {
+      messageJSON <- jsonlite::toJSON(m, method="C")
+      print("message à envoyer")
+      print(messageJSON)
+      private$ws$send(messageJSON)
+      print("message envoyé")
+    },
+    ws = NULL
+  ),
+
+  public = list(
+    initialize = function(
+      port
+    ) {
+      print("ici 0")
+      ws <- websocket::WebSocket$new("ws://localhost:5002", autoConnect = FALSE) # paste("ws://localhost:", as.character(port), sep=""), autoConnect = FALSE)
+      print("ici 1")
+      ws$onOpen(function(event) {
+        print("C'est ouvert !")
+      })
+      print("ici 2")
+      ws$connect()
+      print("ici 3")
+      ws$send("hello")
+
+      private$ws$onMessage(function(event) {
+        print("Message reçu : ", event$data, "\n")
+
+        m <- jsonlite::fromJSON(event$data)
+        écouteur <- private$écouteurs[[m$id]]
+        if (is.null(écouteur)) {
+          return()
+        }
+        if (m$type == 'action') {
+          écouteur$résoudre(m$résultat)
+          private$écouteurs[[m$id]] <- NULL
+        } else if (m$type == 'suivrePrêt') {
+          if (is.null(m$fonctions)){
+            écouteur$résoudre(function() {
+              private$écouteurs[[m$id]] <- NULL
+              messageOublierSuivi <- list(
+                type='retour',
+                id=id,
+                fonction="fOublier"
+              )
+              private$envoyerMessage(messageOublierSuivi)
+            })
+          } else {
+            fonctions = list()
+            for (fonc in names(m$fonctions)) {
+              if (fonc == 'fOublier') {
+                fonctions[[fonc]] = function() {
+                  private$écouteurs[[m$id]] <- NULL
+                  messageOublierSuivi <- list(
+                    type='retour',
+                    id=id,
+                    fonction="fOublier"
+                  )
+                  private$envoyerMessage(messageOublierSuivi)
+                }
+              } else {
+                fonctions[[fonc]] = function(...args) {
+                  private$envoyerMessage(list(
+                    type='retour',
+                    id=m$id,
+                    fonction=fonc,
+                    args: args
+                  ))
+                }
+              }
+            }
+            écouteur$résoudre(fonctions)
+          }
+        } else if (m$type == 'suivre') {
+          écouteur$f(m$résultat)
+        } else if (m$type == 'erreur') {
+          écouteur$rejeter(m$erreur)
+          private$écouteurs[[m$id]] <- NULL
+        } else {
+          stop(paste('Type de message non reconnnu :', m$type, sep=''))
+        }
+      })
+      print("ici 4")
+      private$ws$onClose(function(event) {
+        cat("Client disconnected with code ", event$code,
+            " and reason ", event$reason, "\n", sep = "")
+      })
+      print("ici 5")
+      private$ws$onError(function(event) {
+        cat("Client failed to connect: ", event$message, "\n")
+      })
+      print("ici 6")
+
+    },
+
+    action = function(fonction, paramètres = NULL) {
+      id <- uuid::UUIDgenerate()
+
+      promesseRetourAction <- promises::promise(function (resolve, reject) {
+        print("ici")
+        self$enregistrerÉcoute(id, resolve, reject)
+        print('là')
+      })
+
+      messageAction <- list(
+        type='action',
+        id=id,
+        fonction=fonction,
+        args=if (is.null(paramètres)) list() else paramètres
+      )
+
+      private$envoyerMessage(messageAction)
+
+      return(promesseRetourAction)
+    },
+
+    suivre = function(fonction, paramètres, nomArgFonction='f') {
+      id <- uuid::UUIDgenerate()
+
+      promesseRetourSuivi <- promises::promise(function (resolve, reject) {
+        self$enregistrerÉcoute(id, resolve, reject, f)
+      })
+
+      message <- list(
+        type="suivre",
+        id=id,
+        fonction=fonction,
+        args=if (is.null(paramètres)) list() else paramètres,
+        nomArgFonction=nomArgFonction,
+      )
+
+      private$envoyerMessage(messageSuivi)
+
+      return(promesseRetourSuivi)
+    },
+
+    enregistrerÉcoute = function(id, résoudre, rejeter, f=NULL) {
+      private$écouteurs[[id]] <- list(résoudre=résoudre, rejeter=rejeter, f=f)
+    },
+
+    fermer = function() {
+      private$ws$disconnect()
+    }
+  ),
+)
+
+#'
+#' @export
+avecClient <- function(code, ...) {
+  résultat <- avecServeur(
+    function(port) {
+      client <- Client$new(port)
+      return(code(client))
+    }
+  )
+
+  return(résultat)
+}
