@@ -58,29 +58,49 @@ installerConstellation <- function() {
 lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl") {
   # open /Applications/RStudio.app
   # https://community.rstudio.com/t/how-to-get-rstudio-ide-to-use-the-correct-terminal-path-in-mac-os-x/131528/6
-  commande <- c("lancer")
+  commande <- c("lancer", "-m")
 
   if (!is.null(port)) {
     commande <- c(commande, "--port", port)
   }
   if (!is.null(sfip)) {
-    commande <- c(commande, "--dossier-sfip", sfip)
+    commande <- c(commande, "--doss-sfip", sfip)
   }
   if (!is.null(orbite)) {
-    commande <- c(commande, "--dossier-orbite", orbite)
+    commande <- c(commande, "--doss-orbite", orbite)
   }
 
   p <- processx::process$new(exe, commande, stdout = "|", stdin = "|")
 
-  p$poll_io(5000)
-  résultat <- p$read_output_lines()
-  portFinal <- as.numeric(strsplit(résultat[[1]], ":")[[1]][2])
+  portFinal <- NULL
+  while (TRUE) {
+    p$poll_io(5000)
 
-  fermer <- function() {
-    p$write_input("", sep = "\n")
+    résultat <- p$read_output_lines()
+    if (!length(résultat)) {break}
+
+    for (l in length(résultat)) {
+      ligne <- résultat[l]
+
+      if (grepl("MESSAGE MACHINE", ligne)) {
+        messageMachine = jsonlite::fromJSON(stringi::stri_split_fixed(ligne, ":", 2)[[1]][2])
+
+        if (messageMachine$type == "NŒUD PRÊT") {
+          portFinal <- as.numeric(messageMachine$port)
+          break;
+        }
+      }
+    }
   }
-  print("Serveur prêt")
-  print(portFinal)
+
+  if (is.null(portFinal)) {
+    stop("Serveur mal initialisé.")
+  }
+  fermer <- function() {
+    p$write_input("\n", sep = "\n")
+    p$wait()
+  }
+
   return(list(port=portFinal, fermer=fermer))
 }
 
@@ -88,7 +108,7 @@ avecServeur = function(code, ...) {
   serveur <- lancerServeur(...)
   résultat <- tryCatch(
     {
-      code(serveur$port)
+      code(serveur)
     },
     error = function(cond) {
       message(cond)

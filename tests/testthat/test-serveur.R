@@ -1,14 +1,25 @@
-créerServeurTest <- function(...) {
-  dossierOrbite <- tempdir('orbite')
-  dossierSFIP <- tempdir('sfip')
+avecServeurTest <- function(code, ...) {
+  id <- uuid::UUIDgenerate()
+  dossierBase <- file.path(tempdir(), id)
 
-  serveur = constellationR::lancerServeur(..., sfip=dossierSFIP, orbite=dossierOrbite)
-  withr::defer(function() {
-    serveur$fermer()
-    unlink(dossierOrbite)
-    unlink(dossierSFIP)
-  })
-  return(serveur$port)
+  dossierOrbite <- file.path(dossierBase, "orbite")
+  dossierSFIP <- file.path(dossierBase, "sfip")
+
+  params = list(...)
+  if (is.null(params$orbite)) params$orbite <- dossierOrbite
+  if (is.null(params$sfip)) params$sfip <- dossierSFIP
+
+  # Effacer le dossier temporaire une fois qu'on a fini
+  on.exit(unlink(dossierBase, recursive = TRUE), add = TRUE)
+
+  résultat <- do.call(
+    constellationR::avecServeur,
+    c(
+      code,
+      params
+    )
+  )
+  return(résultat)
 }
 
 testthat::test_that("obtenir version serveur", {
@@ -17,34 +28,44 @@ testthat::test_that("obtenir version serveur", {
 })
 
 testthat::test_that("obtenir version ipa", {
-  version <- obtVersionIPAConstellation()
+  version <- constellationR::obtVersionIPAConstellation()
   expect_equal(length(strsplit(version, "\\.")[[1]]), 3)
 })
 
 
 testthat::test_that("lancer serveur", {
-  port <- créerServeurTest()
-
-  expect_equal(class(port), "numeric")
+  avecServeurTest(
+    function(serveur) {
+      expect_equal(class(serveur$port), "numeric")
+    }
+  )
 })
 
 testthat::test_that("lancer serveur port spécifié", {
-  port <- créerServeurTest(port=5123)
-  expect_equal(port, 5123)
-})
-
-testthat::test_that("lancer serveur dossier sfip spécifié", {
-  dossierSFIP <- tempdir('sfip')
-  serveur <- constellationR::lancerServeur(sfip=dossierSFIP)
-  serveur$fermer()
-  testthat::expect_true(dir.exists(dossierSFIP))
-  unlink(dossierSFIP)
+  avecServeurTest(
+    function(serveur) {
+      expect_equal(serveur$port, 5123)
+    },
+    port=5123
+  )
 })
 
 testthat::test_that("lancer serveur dossier orbite spécifié", {
-  dossierOrbite <- tempdir('orbite')
-  serveur <- constellationR::lancerServeur(orbite = dossierOrbite)
-  serveur$fermer()
-  testthat::expect_true(dir.exists(dossierOrbite))
-  unlink(dossierOrbite)
+  dossierOrbite <- file.path(tempdir(), "monDossierOrbite")
+  avecServeurTest(
+    function (serveur) {
+      testthat::expect_true(dir.exists(dossierOrbite))
+    },
+    orbite = dossierOrbite
+  )
+})
+
+testthat::test_that("lancer serveur dossier sfip spécifié", {
+  dossierSFIP <- file.path(tempdir(), "monDossierSFIP")
+  avecServeurTest(
+    function (serveur) {
+      testthat::expect_true(dir.exists(dossierSFIP))
+    },
+    sfip = dossierSFIP
+  )
 })

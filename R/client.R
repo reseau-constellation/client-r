@@ -17,7 +17,7 @@ Client <- R6Class(
       port
     ) {
       print("ici 0")
-      ws <- websocket::WebSocket$new("ws://localhost:5002", autoConnect = FALSE) # paste("ws://localhost:", as.character(port), sep=""), autoConnect = FALSE)
+      ws <- websocket::WebSocket$new(paste("ws://localhost:", as.character(port), sep=""), autoConnect = FALSE)
       print("ici 1")
       ws$onOpen(function(event) {
         print("C'est ouvert !")
@@ -98,44 +98,86 @@ Client <- R6Class(
     },
 
     action = function(fonction, paramètres = NULL) {
+      nomFonction <- résoudreNomFonction(fonction)
+
       id <- uuid::UUIDgenerate()
 
-      promesseRetourAction <- promises::promise(function (resolve, reject) {
-        print("ici")
-        self$enregistrerÉcoute(id, resolve, reject)
-        print('là')
-      })
+      résultat <- NULL
+      fÉcoute <- function(rés) {
+        résultat <<- rés
+      }
+      fErreur <- stop(paste("Il y a eu une erreur :", nomFonction, "paramètres", paramètres))
+
+      self$enregistrerÉcoute(id, résoudre=fÉcoute, rejeter=fErreur)
 
       messageAction <- list(
         type='action',
         id=id,
-        fonction=fonction,
+        fonction=nomFonction,
         args=if (is.null(paramètres)) list() else paramètres
       )
 
       private$envoyerMessage(messageAction)
 
-      return(promesseRetourAction)
+      retry::wait_until(!is.null(réssultat))
+
+      return(résultat)
     },
 
     suivre = function(fonction, paramètres, nomArgFonction='f') {
+      nomFonction <- résoudreNomFonction(fonction)
+
       id <- uuid::UUIDgenerate()
 
-      promesseRetourSuivi <- promises::promise(function (resolve, reject) {
-        self$enregistrerÉcoute(id, resolve, reject, f)
-      })
+      écoutePrète <- FALSE
+      résoudre <- function() {
+        écoutePrète <<- TRUE
+      }
+
+      résultatSuivi <- NULL
+      appelléAvecFonction <- nomArgFonction %in% names(paramètres)
+      if (appelléAvecFonction) {
+        f <- paramètres[[nomArgFonction]]
+      } else {
+        f <- function(rés) {
+          résultatSuivi <<- rés
+        }
+      }
+
+      self$enregistrerÉcoute(id, résoudre = résoudre, rejeter = rejeter, f = f)
 
       message <- list(
         type="suivre",
         id=id,
-        fonction=fonction,
+        fonction=nomFonction,
         args=if (is.null(paramètres)) list() else paramètres,
         nomArgFonction=nomArgFonction,
       )
 
       private$envoyerMessage(messageSuivi)
+      retry::wait_until(isTRUE(écoutePrète))
 
-      return(promesseRetourSuivi)
+      messageOublier <- list(
+        type="retour",
+        id=id,
+        fonction="fOublier",
+      )
+      fOublier <- function() {
+        private$envoyerMessage(messageOublier)
+      }
+
+      if (appelléAvecFonction) {
+        return(fOublier)
+      } else {
+        retry::wait_until(!is.null(résultatSuivi))
+        fOublier()
+        return(résultatSuivi)
+      }
+
+    },
+
+    rechercher = function( ) {
+
     },
 
     enregistrerÉcoute = function(id, résoudre, rejeter, f=NULL) {
@@ -152,10 +194,11 @@ Client <- R6Class(
 #' @export
 avecClient <- function(code, ...) {
   résultat <- avecServeur(
-    function(port) {
-      client <- Client$new(port)
+    function(serveur) {
+      client <- Client$new(serveur$port)
       return(code(client))
-    }
+    },
+    ...
   )
 
   return(résultat)

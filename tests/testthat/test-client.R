@@ -1,16 +1,110 @@
+avecClientTest <- function(code) {
+  id <- uuid::UUIDgenerate()
+  dossierBase <- file.path(tempdir(), id)
 
-constellationR::avecClient(
+  dossierOrbite <- file.path(dossierBase, "orbite")
+  dossierSFIP <- file.path(dossierBase, "sfip")
+
+  # Effacer le dossier temporaire une fois qu'on a fini
+  on.exit(unlink(dossierBase, recursive = TRUE), add = TRUE)
+
+  résultat <- constellationR::avecClient(
+    code,
+    orbite = dossierOrbite,
+    sfip = dossierSFIP,
+  )
+  return(résultat)
+}
+
+
+avecClientTest(
   function (client) {
-    test_that("actions", {
-      # résultat <- client$action("obtIdBdCompte")
-      # print("résultat")
-      # print(résultat)
 
-      # then(résultat, print)
-      Sys.sleep(15)
-      # print(résultat)
-      # testthat::expect_equal(class(idCompte), "character")
-      # testthat::expect_gt(nchar(idCompte), 0)
+    testthat::test_that("actions", {
+      résultat <- client$action("obtIdCompte")
+      testthat::expect_equal(class(idCompte), "character")
+      testthat::expect_gt(nchar(idCompte), 0)
+    })
+
+    testthat::test_that("suivi", {
+      nomsProfil <- NULL
+      oublier <- client$suivi(
+        "profil.suivreNoms",
+        function (noms) {
+          nomsProfil <<- noms
+        }
+      )
+      client$action("profil.sauvegarderNoms", list(langue="fr", nom="C'est moi ! :)"))
+      retry::wait_until(
+        identical(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+      )
+      testthat::expect_equal(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+    })
+
+    testthat::test_that("suivi une fois", {
+      nomsProfil <- client$suivi("profil.suivreNoms")
+      testthat::expect_equal(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+    })
+
+    testthat::test_that("recherche", {
+      variablesTrouvées <- NULL
+      f <- function(résultats) {
+        variablesTrouvées <<- résultats
+      }
+      retour <- client$recherche("recherche.rechercherVariablesSelonNom", list(nom="Oiseau"), f = f)
+
+      idVariableAudio <- client$action("variables.créerVariable", list(catégorie="audio"))
+      client$action(
+        "variables.sauvegarderNomVariable",
+        list(idVariable=idVariableAudio, langue="fr", nom="Audio oiseaux")
+      )
+
+      idVariableNom <- client$action("variables.créerVariable", list(catégorie="chaîne"))
+      client$action(
+        "variables.sauvegarderNomVariable",
+        list(idVariable=idVariableNom, langue="fr", nom="Nom Oiseau")
+      )
+
+      retry::wait_until(length(variablesTrouvées) > 1)
+      testthat::expect_true(all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées))
+
+      retour$fChangerN(1)
+      retry::wait_until(length(variablesTrouvées) <= 1)
+      testthat::expect_true(idVariableNom %in% variablesTrouvées)
+
+      retour$fChangerN(3)
+      retry::wait_until(length(variablesTrouvées) > 1)
+      testthat::expect_true(all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées))
+
+      retour$fOublier()
+    })
+
+    testthat::test_that("Appeler action", {
+      idDispositif <- client$appeler("obtIdDispositif")
+      testthat::expect_equal(class(idDispositif), "character")
+      testthat::expect_gt(nchar(idDispositif), 0)
+    })
+
+    testthat::test_that("Appeler suivi", {
+      nomsProfil <- client$appeler("profil.suivreNoms")
+      testthat::expect_equal(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+    })
+
+    testthat::test_that("Appeler recherche", {
+      variablesTrouvées <- NULL
+      f <- function(résultats) {
+        variablesTrouvées <<- résultats
+      }
+      retour <- client$appeler("recherche.rechercherVariablesSelonNom", list(nom="Oiseau"), f = f)
+      wait_until(length(variablesTrouvées) > 1)
+      testthat::expect_true(all(nchar(variablesTrouvées) > 0))
+    })
+
+    testthat::test_that("Obtenir données tableau", {
+
+    })
+
+    testthat::test_that("Obtenir données nuée", {
 
     })
   }
