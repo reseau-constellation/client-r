@@ -7,20 +7,20 @@
 [![R-CMD-check](https://github.com/reseau-constellation/client-r/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/reseau-constellation/client-r/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of constellationR is to ...
+`constellationR` est un paquet R pour interagir avec le logiciel Constellation pour le partage de données scientifiques distribuées.
 
 ## Installation
 
-You can install the development version of constellationR from [GitHub](https://github.com/) with:
+Vous pouvez installer `constellationR` de [GitHub](https://github.com/) ainsi :
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("reseau-constellation/client-r")
 ```
 
-## Example
+## Utilisation
 
-This is a basic example which shows you how to solve a common problem:
+Quand ça fonctionnera, on vous donnera un exemple ici.
 
 ``` r
 library(constellationR)
