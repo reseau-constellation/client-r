@@ -33,6 +33,7 @@ obtVersionIPAConstellation <- function(exe = "constl") {
 
 #' Installer Constellation sur votre système. Nécessite Node.js (https://nodejs.org/fr) et pnpm (https://pnpm.io/)
 #'
+#' @export
 #' @examples
 #' # Installer ou mettre à jour
 #' installerConstellation()
@@ -98,7 +99,8 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   }
   fermer <- function() {
     p$write_input("\n", sep = "\n")
-    p$wait()
+    p$wait(2)
+    p$kill()
   }
 
   return(list(port=portFinal, fermer=fermer))

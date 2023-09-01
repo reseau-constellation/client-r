@@ -22,8 +22,27 @@ devtools::install_github("reseau-constellation/client-r")
 
 Quand ça fonctionnera, on vous donnera un exemple ici.
 
+Action
 ``` r
 library(constellationR)
+
 ## basic example code
+
 ```
+Suivi
+
+Suivi une fois
+
+Recherche
+
+Fonctions spéciales
+
+### Serveur existant
+Si vous avez déjà lancé un serveur Constellation (p. ex., dans l'interface graphique ou bien à travers un autre processus), vous pouvez vous connecter directement à celui-ci.
+```r
+
+```
+
+### Options serveur
+
 

@@ -1,13 +1,18 @@
+préparerParamsFoncMessage <- function(paramètres) {
+  return(if (is.null(paramètres)) data.frame() else paramètres)
+}
+préparerNomFoncMessage <- function(nomFonction) {
+  return(if (length(nomFonction) > 1) nomFonction else list(nomFonction))
+}
+
 Client <- R6Class(
   "ClientConstellation",
   private = list(
     écouteurs = list(),
     envoyerMessage = function(m) {
-      messageJSON <- jsonlite::toJSON(m, method="C")
-      print("message à envoyer")
-      print(messageJSON)
+      messageJSON <- jsonlite::toJSON(m, auto_unbox=TRUE, dataframe = "columns")
+
       private$ws$send(messageJSON)
-      print("message envoyé")
     },
     ws = NULL
   ),
@@ -16,21 +21,16 @@ Client <- R6Class(
     initialize = function(
       port
     ) {
-      print("ici 0")
-      ws <- websocket::WebSocket$new(paste("ws://localhost:", as.character(port), sep=""), autoConnect = FALSE)
-      print("ici 1")
-      ws$onOpen(function(event) {
-        print("C'est ouvert !")
+      Sys.sleep(2)
+      private$ws <- websocket::WebSocket$new(paste("ws://localhost:", as.character(port), sep=""), autoConnect = FALSE)
+
+      ouvert <- FALSE
+      private$ws$onOpen(function(event) {
+        ouvert <<- TRUE
       })
-      print("ici 2")
-      ws$connect()
-      print("ici 3")
-      ws$send("hello")
 
       private$ws$onMessage(function(event) {
-        print("Message reçu : ", event$data, "\n")
-
-        m <- jsonlite::fromJSON(event$data)
+        m <- jsonlite::fromJSON(event$data, simplifyDataFrame = FALSE)
         écouteur <- private$écouteurs[[m$id]]
         if (is.null(écouteur)) {
           return()
@@ -44,39 +44,41 @@ Client <- R6Class(
               private$écouteurs[[m$id]] <- NULL
               messageOublierSuivi <- list(
                 type='retour',
-                id=id,
+                id=m$id,
                 fonction="fOublier"
               )
               private$envoyerMessage(messageOublierSuivi)
             })
           } else {
             fonctions = list()
-            for (fonc in names(m$fonctions)) {
+
+            for (fonc in m$fonctions) {
               if (fonc == 'fOublier') {
                 fonctions[[fonc]] = function() {
                   private$écouteurs[[m$id]] <- NULL
                   messageOublierSuivi <- list(
                     type='retour',
-                    id=id,
+                    id=m$id,
                     fonction="fOublier"
                   )
                   private$envoyerMessage(messageOublierSuivi)
                 }
               } else {
-                fonctions[[fonc]] = function(...args) {
-                  private$envoyerMessage(list(
+                fonctions[[fonc]] = function(...) {
+                  messageF <- list(
                     type='retour',
                     id=m$id,
                     fonction=fonc,
-                    args: args
-                  ))
+                    args=list(...)
+                  )
+                  private$envoyerMessage(messageF)
                 }
               }
             }
             écouteur$résoudre(fonctions)
           }
         } else if (m$type == 'suivre') {
-          écouteur$f(m$résultat)
+          écouteur$f(m$données)
         } else if (m$type == 'erreur') {
           écouteur$rejeter(m$erreur)
           private$écouteurs[[m$id]] <- NULL
@@ -84,16 +86,20 @@ Client <- R6Class(
           stop(paste('Type de message non reconnnu :', m$type, sep=''))
         }
       })
-      print("ici 4")
       private$ws$onClose(function(event) {
         cat("Client disconnected with code ", event$code,
             " and reason ", event$reason, "\n", sep = "")
       })
-      print("ici 5")
       private$ws$onError(function(event) {
         cat("Client failed to connect: ", event$message, "\n")
       })
-      print("ici 6")
+
+      Sys.sleep(1)
+      private$ws$connect()
+      Sys.sleep(2)
+
+      retry::wait_until(isTRUE(ouvert))
+      Sys.sleep(1)
 
     },
 
@@ -103,68 +109,63 @@ Client <- R6Class(
       id <- uuid::UUIDgenerate()
 
       résultat <- NULL
+      résultatReçu <- FALSE
       fÉcoute <- function(rés) {
         résultat <<- rés
+        résultatReçu <<- TRUE
       }
-      fErreur <- stop(paste("Il y a eu une erreur :", nomFonction, "paramètres", paramètres))
+      fErreur <- function(erreur) {stop(paste("Il y a eu une erreur :", nomFonction, "paramètres", paramètres, erreur))}
 
       self$enregistrerÉcoute(id, résoudre=fÉcoute, rejeter=fErreur)
 
       messageAction <- list(
         type='action',
         id=id,
-        fonction=nomFonction,
-        args=if (is.null(paramètres)) list() else paramètres
+        fonction=préparerNomFoncMessage(nomFonction),
+        args=préparerParamsFoncMessage(paramètres)
       )
 
       private$envoyerMessage(messageAction)
 
-      retry::wait_until(!is.null(réssultat))
+      retry::wait_until(isTRUE(résultatReçu))
 
       return(résultat)
     },
 
-    suivre = function(fonction, paramètres, nomArgFonction='f') {
+    suivre = function(fonction, paramètres = NULL, nomArgFonction='f') {
       nomFonction <- résoudreNomFonction(fonction)
-
       id <- uuid::UUIDgenerate()
 
-      écoutePrète <- FALSE
-      résoudre <- function() {
-        écoutePrète <<- TRUE
+      fOublier <- NULL
+      résoudre <- function(f) {
+        fOublier <<- f
       }
+
+      fErreur <- function(erreur) {stop(paste("Il y a eu une erreur :", nomFonction, "paramètres", paramètres, erreur))}
 
       résultatSuivi <- NULL
       appelléAvecFonction <- nomArgFonction %in% names(paramètres)
       if (appelléAvecFonction) {
         f <- paramètres[[nomArgFonction]]
+        paramètres[[nomArgFonction]] <- NULL
       } else {
         f <- function(rés) {
           résultatSuivi <<- rés
         }
       }
 
-      self$enregistrerÉcoute(id, résoudre = résoudre, rejeter = rejeter, f = f)
+      self$enregistrerÉcoute(id, résoudre = résoudre, rejeter = fErreur, f = f)
 
-      message <- list(
+      messageSuivi <- list(
         type="suivre",
         id=id,
-        fonction=nomFonction,
-        args=if (is.null(paramètres)) list() else paramètres,
-        nomArgFonction=nomArgFonction,
+        fonction=préparerNomFoncMessage(nomFonction),
+        args=préparerParamsFoncMessage(paramètres),
+        nomArgFonction=nomArgFonction
       )
 
       private$envoyerMessage(messageSuivi)
-      retry::wait_until(isTRUE(écoutePrète))
-
-      messageOublier <- list(
-        type="retour",
-        id=id,
-        fonction="fOublier",
-      )
-      fOublier <- function() {
-        private$envoyerMessage(messageOublier)
-      }
+      retry::wait_until(!is.null(fOublier))
 
       if (appelléAvecFonction) {
         return(fOublier)
@@ -176,8 +177,70 @@ Client <- R6Class(
 
     },
 
-    rechercher = function( ) {
+    rechercher = function(fonction, paramètres, nomArgFonction = "f") {
+      nomFonction <- résoudreNomFonction(fonction)
+      id <- uuid::UUIDgenerate()
 
+      retour <- NULL
+      résoudre <- function(f) {
+        retour <<- f
+      }
+
+      fErreur <- function(erreur) {stop(paste("Il y a eu une erreur :", nomFonction, "paramètres", paramètres, erreur))}
+
+      résultatRecherche <- NULL
+      appelléAvecFonction <- nomArgFonction %in% names(paramètres)
+      if (appelléAvecFonction) {
+        f <- paramètres[[nomArgFonction]]
+        paramètres[[nomArgFonction]] <- NULL
+      } else {
+        f <- function(rés) {
+          résultatRecherche <<- rés
+        }
+      }
+
+      self$enregistrerÉcoute(id, résoudre = résoudre, rejeter = fErreur, f = f)
+
+      messageSuivi <- list(
+        type="suivre",
+        id=id,
+        fonction = préparerNomFoncMessage(nomFonction),
+        args = préparerParamsFoncMessage(paramètres),
+        nomArgFonction = nomArgFonction
+      )
+
+      private$envoyerMessage(messageSuivi)
+      retry::wait_until(!is.null(retour))
+
+      if (appelléAvecFonction) {
+        return(retour)
+      } else {
+        retry::wait_until(!is.null(résultatRecherche))
+        retour$fOublier()
+        return(résultatRecherche)
+      }
+
+    },
+
+    appeler = function(fonction, paramètres = NULL, nomArgFonction='f') {
+      typeFonction <- constellationR::résoudreTypeFonction(fonction)
+      if (typeFonction == "action") {
+        return(
+          self$action(fonction=fonction, paramètres = paramètres)
+          )
+      } else if (typeFonction == "suivi") {
+        return(
+          self$suivre(
+            fonction=fonction, paramètres = paramètres, nomArgFonction = nomArgFonction
+            )
+        )
+      } else if (typeFonction == "recherche") {
+        return(
+          self$rechercher(
+            fonction = fonction, paramètres = paramètres, nomArgFonction=nomArgFonction
+            )
+        )
+      }
     },
 
     enregistrerÉcoute = function(id, résoudre, rejeter, f=NULL) {
@@ -185,7 +248,7 @@ Client <- R6Class(
     },
 
     fermer = function() {
-      private$ws$disconnect()
+      private$ws$close()
     }
   ),
 )
@@ -196,7 +259,26 @@ avecClient <- function(code, ...) {
   résultat <- avecServeur(
     function(serveur) {
       client <- Client$new(serveur$port)
-      return(code(client))
+      résultatClient <- tryCatch(
+        {
+          code(client)
+        },
+        error = function(cond) {
+          message(cond)
+          print(cond)
+          return(cond)
+        },
+        warning = function(cond) {
+          message(cond)
+          print(cond)
+          return(cond)
+        },
+        finally = {
+          client$fermer()
+        }
+      )
+
+      return(résultatClient)
     },
     ...
   )

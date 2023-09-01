@@ -20,63 +20,81 @@ avecClientTest <- function(code) {
 avecClientTest(
   function (client) {
 
-    testthat::test_that("actions", {
-      résultat <- client$action("obtIdCompte")
+    testthat::test_that("Actions", {
+      idCompte <- client$action("obtIdCompte")
       testthat::expect_equal(class(idCompte), "character")
       testthat::expect_gt(nchar(idCompte), 0)
     })
 
-    testthat::test_that("suivi", {
+    testthat::test_that("Suivi", {
       nomsProfil <- NULL
-      oublier <- client$suivi(
+      oublier <- client$suivre(
         "profil.suivreNoms",
-        function (noms) {
+        list(f = function (noms) {
           nomsProfil <<- noms
-        }
+        }),
       )
-      client$action("profil.sauvegarderNoms", list(langue="fr", nom="C'est moi ! :)"))
+      client$action("profil.sauvegarderNom", list(langue="fr", nom="C'est moi ! :)"))
+
       retry::wait_until(
-        identical(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+        identical(nomsProfil, list(fr="C'est moi ! :)")),
+        timeout = 5
       )
-      testthat::expect_equal(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+
+      testthat::expect_equal(nomsProfil, list(fr="C'est moi ! :)"))
     })
 
-    testthat::test_that("suivi une fois", {
-      nomsProfil <- client$suivi("profil.suivreNoms")
-      testthat::expect_equal(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+    testthat::test_that("Suivi une fois", {
+      nomsProfil <- client$suivre("profil.suivreNoms")
+      testthat::expect_equal(nomsProfil, list(fr="C'est moi ! :)"))
     })
 
-    testthat::test_that("recherche", {
+    testthat::test_that("Recherche", {
       variablesTrouvées <- NULL
       f <- function(résultats) {
-        variablesTrouvées <<- résultats
+        variablesTrouvées <<- sapply(résultats, (\(x) x$id))
       }
-      retour <- client$recherche("recherche.rechercherVariablesSelonNom", list(nom="Oiseau"), f = f)
+      retour <- client$rechercher(
+        "recherche.rechercherVariablesSelonNom",
+        list(nomVariable="oiseaux", nRésultatsDésirés = 10, f = f)
+      )
 
       idVariableAudio <- client$action("variables.créerVariable", list(catégorie="audio"))
+
       client$action(
         "variables.sauvegarderNomVariable",
         list(idVariable=idVariableAudio, langue="fr", nom="Audio oiseaux")
       )
 
       idVariableNom <- client$action("variables.créerVariable", list(catégorie="chaîne"))
+
       client$action(
         "variables.sauvegarderNomVariable",
-        list(idVariable=idVariableNom, langue="fr", nom="Nom Oiseau")
+        list(idVariable=idVariableNom, langue="fr", nom="Nom oiseau")
       )
 
-      retry::wait_until(length(variablesTrouvées) > 1)
+      retry::wait_until(length(variablesTrouvées) > 1, timeout=5)
       testthat::expect_true(all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées))
 
       retour$fChangerN(1)
-      retry::wait_until(length(variablesTrouvées) <= 1)
-      testthat::expect_true(idVariableNom %in% variablesTrouvées)
+      retry::wait_until(length(variablesTrouvées) <= 1, timeout=5)
+      testthat::expect_true(idVariableAudio %in% variablesTrouvées)
 
       retour$fChangerN(3)
-      retry::wait_until(length(variablesTrouvées) > 1)
+      retry::wait_until(length(variablesTrouvées) > 1, timeout=5)
       testthat::expect_true(all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées))
 
       retour$fOublier()
+    })
+
+    testthat::test_that("Recherche une fois", {
+      variablesTrouvées <- client$rechercher(
+        "recherche.rechercherVariablesSelonNom",
+        list(nomVariable="oiseaux", nRésultatsDésirés = 10)
+      )
+
+      retry::wait_until(length(variablesTrouvées) > 1, timeout = 5)
+      testthat::expect_true(all(nchar(variablesTrouvées) > 0))
     })
 
     testthat::test_that("Appeler action", {
@@ -87,16 +105,19 @@ avecClientTest(
 
     testthat::test_that("Appeler suivi", {
       nomsProfil <- client$appeler("profil.suivreNoms")
-      testthat::expect_equal(nomsProfil, list(langue="fr", nom="C'est moi ! :)"))
+      testthat::expect_equal(nomsProfil, list(fr="C'est moi ! :)"))
     })
 
     testthat::test_that("Appeler recherche", {
       variablesTrouvées <- NULL
       f <- function(résultats) {
-        variablesTrouvées <<- résultats
+        variablesTrouvées <<- sapply(résultats, (\(x) x$id))
       }
-      retour <- client$appeler("recherche.rechercherVariablesSelonNom", list(nom="Oiseau"), f = f)
-      wait_until(length(variablesTrouvées) > 1)
+      retour <- client$appeler(
+        "recherche.rechercherVariablesSelonNom",
+        list(nomVariable="oiseau", nRésultatsDésirés = 10, f = f)
+      )
+      retry::wait_until(length(variablesTrouvées) > 1, timeout = 5)
       testthat::expect_true(all(nchar(variablesTrouvées) > 0))
     })
 
