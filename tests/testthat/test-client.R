@@ -34,7 +34,9 @@ avecClientTest(
           nomsProfil <<- noms
         }),
       )
-      client$action("profil.sauvegarderNom", list(langue="fr", nom="C'est moi ! :)"))
+      client$action(
+        "profil.sauvegarderNom", list(langue="fr", nom="C'est moi ! :)")
+      )
 
       retry::wait_until(
         identical(nomsProfil, list(fr="C'est moi ! :)")),
@@ -52,21 +54,25 @@ avecClientTest(
     testthat::test_that("Recherche", {
       variablesTrouvées <- NULL
       f <- function(résultats) {
-        variablesTrouvées <<- sapply(résultats, (\(x) x$id))
+        variablesTrouvées <<- vapply(résultats, (\(x) x$id))
       }
       retour <- client$rechercher(
         "recherche.rechercherVariablesSelonNom",
         list(nomVariable="oiseaux", nRésultatsDésirés = 10, f = f)
       )
 
-      idVariableAudio <- client$action("variables.créerVariable", list(catégorie="audio"))
+      idVariableAudio <- client$action(
+        "variables.créerVariable", list(catégorie="audio")
+      )
 
       client$action(
         "variables.sauvegarderNomVariable",
         list(idVariable=idVariableAudio, langue="fr", nom="Audio oiseaux")
       )
 
-      idVariableNom <- client$action("variables.créerVariable", list(catégorie="chaîne"))
+      idVariableNom <- client$action(
+        "variables.créerVariable", list(catégorie="chaîne")
+      )
 
       client$action(
         "variables.sauvegarderNomVariable",
@@ -74,7 +80,9 @@ avecClientTest(
       )
 
       retry::wait_until(length(variablesTrouvées) > 1, timeout=5)
-      testthat::expect_true(all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées))
+      testthat::expect_true(
+        all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées)
+      )
 
       retour$fChangerN(1)
       retry::wait_until(length(variablesTrouvées) <= 1, timeout=5)
@@ -82,7 +90,9 @@ avecClientTest(
 
       retour$fChangerN(3)
       retry::wait_until(length(variablesTrouvées) > 1, timeout=5)
-      testthat::expect_true(all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées))
+      testthat::expect_true(
+        all(c(idVariableNom, idVariableAudio) %in% variablesTrouvées)
+      )
 
       retour$fOublier()
     })
@@ -111,7 +121,7 @@ avecClientTest(
     testthat::test_that("Appeler recherche", {
       variablesTrouvées <- NULL
       f <- function(résultats) {
-        variablesTrouvées <<- sapply(résultats, (\(x) x$id))
+        variablesTrouvées <<- vapply(résultats, (\(x) x$id))
       }
       retour <- client$appeler(
         "recherche.rechercherVariablesSelonNom",

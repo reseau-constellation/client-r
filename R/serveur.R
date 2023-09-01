@@ -84,11 +84,13 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
       ligne <- résultat[l]
 
       if (grepl("MESSAGE MACHINE", ligne)) {
-        messageMachine = jsonlite::fromJSON(stringi::stri_split_fixed(ligne, ":", 2)[[1]][2])
+        messageMachine <- jsonlite::fromJSON(
+          stringi::stri_split_fixed(ligne, ":", 2)[[1]][2]
+        )
 
         if (messageMachine$type == "NŒUD PRÊT") {
           portFinal <- as.numeric(messageMachine$port)
-          break;
+          break
         }
       }
     }
@@ -106,7 +108,7 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   return(list(port=portFinal, fermer=fermer))
 }
 
-avecServeur = function(code, ...) {
+avecServeur <- function(code, ...) {
   serveur <- lancerServeur(...)
   résultat <- tryCatch(
     {

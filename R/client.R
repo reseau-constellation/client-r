@@ -50,11 +50,11 @@ Client <- R6Class(
               private$envoyerMessage(messageOublierSuivi)
             })
           } else {
-            fonctions = list()
+            fonctions <- list()
 
             for (fonc in m$fonctions) {
               if (fonc == 'fOublier') {
-                fonctions[[fonc]] = function() {
+                fonctions[[fonc]] <- function() {
                   private$écouteurs[[m$id]] <- NULL
                   messageOublierSuivi <- list(
                     type='retour',
@@ -64,7 +64,7 @@ Client <- R6Class(
                   private$envoyerMessage(messageOublierSuivi)
                 }
               } else {
-                fonctions[[fonc]] = function(...) {
+                fonctions[[fonc]] <- function(...) {
                   messageF <- list(
                     type='retour',
                     id=m$id,

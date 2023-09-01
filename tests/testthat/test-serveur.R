@@ -5,7 +5,7 @@ avecServeurTest <- function(code, ...) {
   dossierOrbite <- file.path(dossierBase, "orbite")
   dossierSFIP <- file.path(dossierBase, "sfip")
 
-  params = list(...)
+  params <- list(...)
   if (is.null(params$orbite)) params$orbite <- dossierOrbite
   if (is.null(params$sfip)) params$sfip <- dossierSFIP
 
