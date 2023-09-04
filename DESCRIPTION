@@ -7,7 +7,8 @@ Authors@R: c(
 Maintainer: Julien Jean Malard-Adam <julien.malard@mail.mcgill.ca>
 Description: Un client R qui vous permet d'accéder le réseau Constellation de données distribuées pour vos analyses en R. Cette librarie ne contient pas de vrai client Constellation en soi, mais plutôt démarre (ou bien se connecte à) un serveur Constellation local sur votre machine. Vous devrez donc installer Constellation sur votre machine avant d'utiliser constellationR.
 License: AGPL (>= 3)
-URL: https://github.com/reseau-constellation/client-r
+URL: https://github.com/reseau-constellation/client-r,
+    https://reseau-constellation.github.io/client-r/
 BugReports: https://github.com/reseau-constellation/issues
 Imports:
     websocket (>= 1.4.1),
@@ -17,7 +18,7 @@ Imports:
     retry,
     stringi,
     jsonlite,
-    processx,
+    processx
 Language: fr
 Encoding: UTF-8
 LazyData: true  
