@@ -65,8 +65,7 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   commande <- c("lancer", "-m")
 
   if (Sys.info()["sysname"] == "Windows") {
-    commande <- c(exe, commande)
-    exe <- "sh"
+    exe <- paste(exe, "cmd", sep="")
   }
 
   if (!is.null(port)) {
@@ -78,8 +77,6 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   if (!is.null(orbite)) {
     commande <- c(commande, "--doss-orbite", orbite)
   }
-
-  print(processx::run("constl", c("v-constl")))
 
   p <- processx::process$new(exe, commande, stdout = "|", stdin = "|", encoding = "UTF-8")
 
