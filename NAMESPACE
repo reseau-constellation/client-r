@@ -1,6 +1,5 @@
 exportPattern("^[[:alpha:]]+")
 import(websocket)
-import(future)
 importFrom(R6, R6Class)
 import(uuid)
 import(retry)
