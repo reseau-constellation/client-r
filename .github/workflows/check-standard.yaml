@@ -40,7 +40,7 @@ jobs:
           version: latest
 
       - run: echo %PATH%
-        if: startsWith(matrix.os, 'windows-latest')
+        if: startsWith(matrix.config.os, 'windows')
 
       - run: pnpm add -g @constl/ipa @constl/serveur
 
