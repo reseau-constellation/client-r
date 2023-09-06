@@ -59,7 +59,13 @@ installerConstellation <- function() {
 lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl") {
   # open /Applications/RStudio.app
   # https://community.rstudio.com/t/how-to-get-rstudio-ide-to-use-the-correct-terminal-path-in-mac-os-x/131528/6
+
   commande <- c("lancer", "-m")
+
+  if (Sys.info()["sysname"] == "Windows") {
+    commande <- c(exe, commande)
+    exe <- "sh"
+  }
 
   if (!is.null(port)) {
     commande <- c(commande, "--port", port)
