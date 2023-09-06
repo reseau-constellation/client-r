@@ -98,7 +98,7 @@ Client <- R6Class(
       private$ws$connect()
       Sys.sleep(2)
 
-      retry::wait_until(isTRUE(ouvert))
+      retry::wait_until(isTRUE(ouvert), timeout = 15)
       Sys.sleep(1)
 
     },
@@ -127,7 +127,7 @@ Client <- R6Class(
 
       private$envoyerMessage(messageAction)
 
-      retry::wait_until(isTRUE(résultatReçu))
+      retry::wait_until(isTRUE(résultatReçu), timeout = 15)
 
       return(résultat)
     },
@@ -165,12 +165,12 @@ Client <- R6Class(
       )
 
       private$envoyerMessage(messageSuivi)
-      retry::wait_until(!is.null(fOublier))
+      retry::wait_until(!is.null(fOublier), timeout = 15)
 
       if (appelléAvecFonction) {
         return(fOublier)
       } else {
-        retry::wait_until(!is.null(résultatSuivi))
+        retry::wait_until(!is.null(résultatSuivi), timeout = 15)
         fOublier()
         return(résultatSuivi)
       }
@@ -210,12 +210,12 @@ Client <- R6Class(
       )
 
       private$envoyerMessage(messageSuivi)
-      retry::wait_until(!is.null(retour))
+      retry::wait_until(!is.null(retour), timeout = 15)
 
       if (appelléAvecFonction) {
         return(retour)
       } else {
-        retry::wait_until(!is.null(résultatRecherche))
+        retry::wait_until(!is.null(résultatRecherche), timeout = 15)
         retour$fOublier()
         return(résultatRecherche)
       }
