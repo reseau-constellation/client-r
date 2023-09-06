@@ -39,6 +39,9 @@ jobs:
         with:
           version: latest
 
+      - run: echo %PNPM_HOME% >> $GITHUB_PATH
+        if: startsWith(matrix.config.os, 'windows')
+
       - run: echo %PATH%
         if: startsWith(matrix.config.os, 'windows')
 
