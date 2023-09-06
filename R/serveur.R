@@ -64,7 +64,9 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
 
   commande <- c("lancer", "-m")
 
-
+  if (Sys.info()["sysname"] == "Windows") {
+    exe <- paste(exe, ".cmd", sep="")
+  }
 
   if (!is.null(port)) {
     commande <- c(commande, "--port", port)
