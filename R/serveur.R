@@ -71,6 +71,8 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
     commande <- c(commande, "--doss-orbite", orbite)
   }
 
+  processx::run("env")
+
   p <- processx::process$new(exe, commande, stdout = "|", stdin = "|")
 
   portFinal <- NULL
