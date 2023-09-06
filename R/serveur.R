@@ -45,6 +45,8 @@ installerConstellation <- function() {
 #'
 #' @param port Le numéro du port sur lequel le port sera connecté
 #' @param exe La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard
+#' @param sfip Le dossier SFIP à utiliser (optionnel)
+#' @param orbite Le dossier du compte Constellation à utiliser (optionnel)
 #'
 #' @return Le numéro de port sur lequel le le serveur écoute désormais
 #' @export
@@ -77,9 +79,9 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
     commande <- c(commande, "--doss-orbite", orbite)
   }
 
-  processx::run("env")
+  print(processx::run("constl", c("v-constl")))
 
-  p <- processx::process$new(exe, commande, stdout = "|", stdin = "|")
+  p <- processx::process$new(exe, commande, stdout = "|", stdin = "|", encoding = "UTF-8")
 
   portFinal <- NULL
   while (TRUE) {
@@ -90,6 +92,7 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
 
     for (l in length(résultat)) {
       ligne <- résultat[l]
+      print(ligne)
 
       if (grepl("MESSAGE MACHINE", ligne)) {
         messageMachine <- jsonlite::fromJSON(
