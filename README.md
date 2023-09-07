@@ -20,9 +20,6 @@ devtools::install_github("reseau-constellation/client-r")
 ```
 
 ## Utilisation
-
-Quand ça fonctionnera, on vous donnera un exemple ici.
-
 Vous pouvez effectuer des actions ainsi :
 
 ``` r
@@ -57,7 +54,7 @@ constellationR::avecClientEtServeur(
       )
     )
     
-    sleep(2)
+    Sys.sleep(2)
     # Arrêter le suivi après 2 secondes
     oublier()
   }
@@ -114,6 +111,16 @@ constellationR::avecClientEtServeur(
       "variables.sauvegarderNomVariable",
       list(idVariable=idVariableNom, langue="fr", nom="Nom oiseau")
     )
+    
+    retour$fChangerN(1)
+    
+    Sys.sleep(2)
+    
+    retour$fChangerN(4)
+    
+    Sys.sleep(2)
+    
+    retour$fOublier()
   }
 )
 ```
@@ -123,7 +130,7 @@ Si vous avez déjà lancé un serveur Constellation (p. ex., dans l'interface gr
 ```r
 library(constellationR)
 
-// Le numéro du port que vous avez lancé
+// Le numéro du port sur lequel vous avez lancé Constellation
 port <- 5003
 
 constellationR::avecClient(
