@@ -34,9 +34,6 @@ obtVersionIPAConstellation <- function(exe = "constl") {
 #' Installer Constellation sur votre système. Nécessite Node.js (https://nodejs.org/fr) et pnpm (https://pnpm.io/)
 #'
 #' @export
-#' @examples
-#' # Installer ou mettre à jour
-#' installerConstellation()
 installerConstellation <- function() {
   system2("pnpm", c("i", "--global", "@constl/ipa", "@constl/serveur"), stdout = TRUE)
 }
@@ -48,16 +45,25 @@ installerConstellation <- function() {
 #' @param sfip Le dossier SFIP à utiliser (optionnel)
 #' @param orbite Le dossier du compte Constellation à utiliser (optionnel)
 #'
-#' @return Le numéro de port sur lequel le le serveur écoute désormais
+#' @return Le numéro de port sur lequel le le serveur écoute désormais, et une fonction à appeler pour fermer le serveur
 #' @export
 #'
 #' @examples
+#'
 #' # Lancer sans port défini
-#' port <- lancerServeur()
+#' serveur <- lancerServeur()
+#' print(serveur$port)
+#' serveur$fermer()
+#'
 #' # Lancer sur un port prédéfini (il doit être libre)
-#' lancerServeur(port=5001)
+#' serveur <- lancerServeur(port=5001)
+#' print(serveur$port)
+#' serveur$fermer()
+#'
 #' # Spécifier le dossier Orbite ou SFIP
-#' lancerServeur(sfip="mon/dossier/SFIP", orbite="mon/dossier/bdOrbite")
+#' serveur <- lancerServeur(sfip="mon/dossier/SFIP", orbite="mon/dossier/bdOrbite")
+#' serveur$fermer()
+
 lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl") {
   # open /Applications/RStudio.app
   # https://community.rstudio.com/t/how-to-get-rstudio-ide-to-use-the-correct-terminal-path-in-mac-os-x/131528/6
@@ -118,6 +124,15 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   return(list(port=portFinal, fermer=fermer))
 }
 
+#' Exécuter
+#'
+#' @param port Le numéro du port sur lequel le port sera connecté
+#' @param exe La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard
+#' @param sfip Le dossier SFIP à utiliser (optionnel)
+#' @param orbite Le dossier du compte Constellation à utiliser (optionnel)
+#'
+#' @return Le numéro de port sur lequel le le serveur écoute désormais
+#' @export
 avecServeur <- function(code, ...) {
   serveur <- lancerServeur(...)
   résultat <- tryCatch(
