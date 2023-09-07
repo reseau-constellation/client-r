@@ -9,19 +9,15 @@ lancerServeur(port = NULL, sfip = NULL, orbite = NULL, exe = "constl")
 \arguments{
 \item{port}{Le numéro du port sur lequel le port sera connecté}
 
+\item{sfip}{Le dossier SFIP à utiliser (optionnel)}
+
+\item{orbite}{Le dossier du compte Constellation à utiliser (optionnel)}
+
 \item{exe}{La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard}
 }
 \value{
-Le numéro de port sur lequel le le serveur écoute désormais
+Le numéro de port sur lequel le le serveur écoute désormais, et une fonction à appeler pour fermer le serveur
 }
 \description{
 Lancer un serveur Constellation local
-}
-\examples{
-# Lancer sans port défini
-port <- lancerServeur()
-# Lancer sur un port prédéfini (il doit être libre)
-lancerServeur(port=5001)
-# Spécifier le dossier Orbite ou SFIP
-lancerServeur(sfip="mon/dossier/SFIP", orbite="mon/dossier/bdOrbite")
 }

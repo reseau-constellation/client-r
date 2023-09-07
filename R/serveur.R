@@ -4,7 +4,7 @@
 #'
 #' @return La version du serveur Constellation
 #' @export
-
+#'
 
 obtVersionServeur <- function(exe = "constl") {
   # Ou peut-être https://www.r-bloggers.com/2021/09/how-to-use-system-commands-in-your-r-script-or-package/ ?
@@ -18,7 +18,7 @@ obtVersionServeur <- function(exe = "constl") {
 #'
 #' @return La version de l'IPA Constellation
 #' @export
-
+#'
 
 obtVersionIPAConstellation <- function(exe = "constl") {
   version <- system2(exe, c("v-constl"), stdout = TRUE)
@@ -44,7 +44,6 @@ installerConstellation <- function() {
 #' @return Le numéro de port sur lequel le le serveur écoute désormais, et une fonction à appeler pour fermer le serveur
 #' @export
 #'
-
 
 lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl") {
   # open /Applications/RStudio.app
