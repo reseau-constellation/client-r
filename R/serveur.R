@@ -53,7 +53,6 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
 
   if (Sys.info()["sysname"] == "Windows") {
     exe <- paste(exe, ".CMD", sep="")
-    print(system2("where.exe", c("constl")))
   }
 
   if (!is.null(port)) {
@@ -78,7 +77,6 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
 
     for (l in length(résultat)) {
       ligne <- résultat[l]
-      print(ligne)
 
       if (grepl("MESSAGE MACHINE", ligne)) {
         messageMachine <- jsonlite::fromJSON(
