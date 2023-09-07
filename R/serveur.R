@@ -82,7 +82,7 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
 
   portFinal <- NULL
   tempsDébut <- Sys.time()
-  while (difftime(Sys.time(), x, units="secs") <= 30) {
+  while (difftime(Sys.time(), tempsDébut, units="secs") <= 30) {
     p$poll_io(5000)
 
     résultat <- p$read_output_lines()
