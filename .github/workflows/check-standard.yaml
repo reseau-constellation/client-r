@@ -54,7 +54,7 @@ jobs:
 
       - run: pnpm add -g @constl/ipa @constl/serveur
 
-      - run: where constl
+      - run: where.exe constl
         if: startsWith(matrix.config.os, 'windows')
 
       - run: ls C:\Users\runneradmin
