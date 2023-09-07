@@ -51,6 +51,14 @@
 <dd><p>Le numéro du port sur lequel le port sera connecté</p></dd>
 
 
+<dt>sfip</dt>
+<dd><p>Le dossier SFIP à utiliser (optionnel)</p></dd>
+
+
+<dt>orbite</dt>
+<dd><p>Le dossier du compte Constellation à utiliser (optionnel)</p></dd>
+
+
 <dt>exe</dt>
 <dd><p>La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard</p></dd>
 
@@ -59,28 +67,9 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Le numéro de port sur lequel le le serveur écoute désormais</p>
+<p>Le numéro de port sur lequel le le serveur écoute désormais, et une fonction à appeler pour fermer le serveur</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Lancer sans port défini</span></span></span>
-<span class="r-in"><span><span class="va">port</span> <span class="op">&lt;-</span> <span class="fu">lancerServeur</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in c("process_initialize(self, private, command, args, stdin, stdout, ", "    stderr, pty, pty_options, connections, poll_connection, env, "):</span> <span style="color: #BBBB00;">!</span> Native call to `processx_exec` failed</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `chain_call(c_processx_exec, command, c(command, args), pty, pty_options, …`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> cannot start processx process 'constl' (system error 2, No such file or directory) @unix/processx.c:611 (processx_exec)</span>
-<span class="r-in"><span><span class="co"># Lancer sur un port prédéfini (il doit être libre)</span></span></span>
-<span class="r-in"><span><span class="fu">lancerServeur</span><span class="op">(</span>port<span class="op">=</span><span class="fl">5001</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in c("process_initialize(self, private, command, args, stdin, stdout, ", "    stderr, pty, pty_options, connections, poll_connection, env, "):</span> <span style="color: #BBBB00;">!</span> Native call to `processx_exec` failed</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `chain_call(c_processx_exec, command, c(command, args), pty, pty_options, …`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> cannot start processx process 'constl' (system error 2, No such file or directory) @unix/processx.c:611 (processx_exec)</span>
-<span class="r-in"><span><span class="co"># Spécifier le dossier Orbite ou SFIP</span></span></span>
-<span class="r-in"><span><span class="fu">lancerServeur</span><span class="op">(</span>sfip<span class="op">=</span><span class="st">"mon/dossier/SFIP"</span>, orbite<span class="op">=</span><span class="st">"mon/dossier/bdOrbite"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in c("process_initialize(self, private, command, args, stdin, stdout, ", "    stderr, pty, pty_options, connections, poll_connection, env, "):</span> <span style="color: #BBBB00;">!</span> Native call to `processx_exec` failed</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `chain_call(c_processx_exec, command, c(command, args), pty, pty_options, …`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> cannot start processx process 'constl' (system error 2, No such file or directory) @unix/processx.c:611 (processx_exec)</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -13,10 +13,28 @@
     <loc>https://reseau-constellation.github.io/client-r/index.html</loc>
   </url>
   <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/Client.html</loc>
+  </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/avecClient.html</loc>
+  </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/avecClientEtServeur.html</loc>
+  </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/avecServeur.html</loc>
+  </url>
+  <url>
     <loc>https://reseau-constellation.github.io/client-r/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/installerConstellation.html</loc>
+  </url>
+  <url>
     <loc>https://reseau-constellation.github.io/client-r/reference/lancerServeur.html</loc>
+  </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/obtVersionIPAConstellation.html</loc>
   </url>
   <url>
     <loc>https://reseau-constellation.github.io/client-r/reference/obtVersionServeur.html</loc>
