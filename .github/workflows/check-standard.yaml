@@ -43,9 +43,6 @@ jobs:
       - run: echo %PNPM_HOME% >> $GITHUB_PATH
         if: startsWith(matrix.config.os, 'windows')
 
-      - run: ls C:\Users\runneradmin & ls C:\Users\runneradmin\setup-pnpm & ls C:\Users\runneradmin\setup-pnpm\node_modules
-        if: startsWith(matrix.config.os, 'windows')
-
       - name: Add to PATH
         if: startsWith(matrix.config.os, 'windows')
         shell: pwsh
@@ -56,6 +53,21 @@ jobs:
         if: startsWith(matrix.config.os, 'windows')
 
       - run: pnpm add -g @constl/ipa @constl/serveur
+
+
+      - run: ls C:\Users\runneradmin
+        if: startsWith(matrix.config.os, 'windows')
+
+
+
+      - run: ls C:\Users\runneradmin\setup-pnpm
+        if: startsWith(matrix.config.os, 'windows')
+
+
+
+      - run: ls C:\Users\runneradmin\setup-pnpm\node_modules
+        if: startsWith(matrix.config.os, 'windows')
+
 
       - run: constl v-constl
 
