@@ -68,25 +68,104 @@
 <h2 id="utilisation">Utilisation<a class="anchor" aria-label="anchor" href="#utilisation"></a>
 </h2>
 <p>Quand ça fonctionnera, on vous donnera un exemple ici.</p>
-<p>Action</p>
+<p>Vous pouvez effectuer des actions ainsi :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/reseau-constellation/client-r" class="external-link">constellationR</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## basic example code</span></span></code></pre></div>
-<p>Suivi</p>
-<p>Suivi une fois</p>
-<p>Recherche</p>
-<p>Fonctions spéciales</p>
+<span><span class="fu">constellationR</span><span class="fu">::</span><span class="fu"><a href="reference/avecClientEtServeur.html">avecClientEtServeur</a></span><span class="op">(</span></span>
+<span>  <span class="kw">function</span> <span class="op">(</span><span class="va">client</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># Accéder l'identifiant du compte</span></span>
+<span>    <span class="va">idCompte</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="fu">appeler</span><span class="op">(</span><span class="st">"obtIdCompte"</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># Créer une nouvelle base de données</span></span>
+<span>    <span class="va">idBd</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="fu">appeler</span><span class="op">(</span></span>
+<span>      <span class="st">"bds.créerBd"</span>, </span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>licence<span class="op">=</span><span class="st">"ODbl-1_0"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Vous pouvez également suivre des données du réseau Constellation :</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/reseau-constellation/client-r" class="external-link">constellationR</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">constellationR</span><span class="fu">::</span><span class="fu"><a href="reference/avecClientEtServeur.html">avecClientEtServeur</a></span><span class="op">(</span></span>
+<span>  <span class="kw">function</span> <span class="op">(</span><span class="va">client</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">oublier</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="fu">appeler</span><span class="op">(</span></span>
+<span>      <span class="st">"bds.suivreNomsBd"</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        idBd <span class="op">=</span> <span class="va">idBd</span>,</span>
+<span>        f <span class="op">=</span> <span class="va">print</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu">sleep</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span>    <span class="co"># Arrêter le suivi après 2 secondes</span></span>
+<span>    <span class="fu">oublier</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Si vous ne voulez pas suivre les données, mais seulement obtenir leur valeur au moment que la fonction est invoquée, vous n’avez qu’à omettre le paramètre de fonction de suivi :</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/reseau-constellation/client-r" class="external-link">constellationR</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">constellationR</span><span class="fu">::</span><span class="fu"><a href="reference/avecClientEtServeur.html">avecClientEtServeur</a></span><span class="op">(</span></span>
+<span>  <span class="kw">function</span> <span class="op">(</span><span class="va">client</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">nomsBd</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="fu">appeler</span><span class="op">(</span></span>
+<span>      <span class="st">"bds.suivreNomsBd"</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        idBd <span class="op">=</span> <span class="va">idBd</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>C’est là même chose pour les fonctions de recherche :</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/reseau-constellation/client-r" class="external-link">constellationR</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">constellationR</span><span class="fu">::</span><span class="fu"><a href="reference/avecClientEtServeur.html">avecClientEtServeur</a></span><span class="op">(</span></span>
+<span>  <span class="kw">function</span> <span class="op">(</span><span class="va">client</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">variablesTrouvées</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>    <span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">résultats</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">variablesTrouvées</span> <span class="op">&lt;&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">résultats</span>, <span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">id</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="va">retour</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="fu">rechercher</span><span class="op">(</span></span>
+<span>      <span class="st">"recherche.rechercherVariablesSelonNom"</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nomVariable<span class="op">=</span><span class="st">"oiseaux"</span>, nRésultatsDésirés <span class="op">=</span> <span class="fl">10</span>, f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">idVariableAudio</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span>
+<span>      <span class="st">"variables.créerVariable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>catégorie<span class="op">=</span><span class="st">"audio"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">client</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span>
+<span>      <span class="st">"variables.sauvegarderNomVariable"</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>idVariable<span class="op">=</span><span class="va">idVariableAudio</span>, langue<span class="op">=</span><span class="st">"fr"</span>, nom<span class="op">=</span><span class="st">"Audio oiseaux"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">idVariableNom</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span>
+<span>      <span class="st">"variables.créerVariable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>catégorie<span class="op">=</span><span class="st">"chaîne"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">client</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span>
+<span>      <span class="st">"variables.sauvegarderNomVariable"</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>idVariable<span class="op">=</span><span class="va">idVariableNom</span>, langue<span class="op">=</span><span class="st">"fr"</span>, nom<span class="op">=</span><span class="st">"Nom oiseau"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="serveur-existant">Serveur existant<a class="anchor" aria-label="anchor" href="#serveur-existant"></a>
 </h3>
 <p>Si vous avez déjà lancé un serveur Constellation (p. ex., dans l’interface graphique ou bien à travers un autre processus), vous pouvez vous connecter directement à celui-ci.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="options-serveur">Options serveur<a class="anchor" aria-label="anchor" href="#options-serveur"></a>
-</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(constellationR)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span><span class="er">/</span> Le numéro du port que vous avez lancé</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>port <span class="ot">&lt;-</span> <span class="dv">5003</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>constellationR<span class="sc">::</span><span class="fu">avecClient</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(client) {</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="sc">/</span><span class="er">/</span> Faire quelque chose avec le client...</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">port =</span> port</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 </div>
 </div>
