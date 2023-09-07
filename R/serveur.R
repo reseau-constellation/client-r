@@ -81,7 +81,8 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   p <- processx::process$new(exe, commande, stdout = "|", stdin = "|", encoding = "UTF-8")
 
   portFinal <- NULL
-  while (TRUE) {
+  tempsDébut <- Sys.time()
+  while (difftime(Sys.time(), x, units="secs") <= 30) {
     p$poll_io(5000)
 
     résultat <- p$read_output_lines()
