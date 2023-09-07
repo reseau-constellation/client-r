@@ -1,4 +1,4 @@
-avecClientTest <- function(code) {
+avecClientEtServeurTest <- function(code) {
   id <- uuid::UUIDgenerate()
   dossierBase <- file.path(tempdir(), id)
 
@@ -8,7 +8,7 @@ avecClientTest <- function(code) {
   # Effacer le dossier temporaire une fois qu'on a fini
   on.exit(unlink(dossierBase, recursive = TRUE), add = TRUE)
 
-  résultat <- constellationR::avecClient(
+  résultat <- constellationR::avecClientEtServeur(
     code,
     orbite = dossierOrbite,
     sfip = dossierSFIP,
@@ -17,7 +17,7 @@ avecClientTest <- function(code) {
 }
 
 
-avecClientTest(
+avecClientEtServeurTest(
   function (client) {
 
     testthat::test_that("Actions", {

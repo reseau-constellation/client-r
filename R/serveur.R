@@ -9,6 +9,7 @@
 #' # Obtenir la version du serveur installé
 #' v <- obtVersionServeur()
 #' print(v)
+
 obtVersionServeur <- function(exe = "constl") {
   # Ou peut-être https://www.r-bloggers.com/2021/09/how-to-use-system-commands-in-your-r-script-or-package/ ?
   version <- system2(exe, c("version"), stdout = TRUE)
@@ -26,6 +27,7 @@ obtVersionServeur <- function(exe = "constl") {
 #' # Obtenir la version de l'IPA installée
 #' v <- obtVersionIPAConstellation()
 #' print(v)
+
 obtVersionIPAConstellation <- function(exe = "constl") {
   version <- system2(exe, c("v-constl"), stdout = TRUE)
   return(version)
@@ -33,7 +35,9 @@ obtVersionIPAConstellation <- function(exe = "constl") {
 
 #' Installer Constellation sur votre système. Nécessite Node.js (https://nodejs.org/fr) et pnpm (https://pnpm.io/)
 #'
+#' @return Rien
 #' @export
+
 installerConstellation <- function() {
   system2("pnpm", c("i", "--global", "@constl/ipa", "@constl/serveur"), stdout = TRUE)
 }
@@ -124,20 +128,19 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   return(list(port=portFinal, fermer=fermer))
 }
 
-#' Exécuter
+#' Exécuter du code dans le contexte d'un serveur Constellation, et fermer le serveur par la suite.
 #'
-#' @param port Le numéro du port sur lequel le port sera connecté
-#' @param exe La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard
-#' @param sfip Le dossier SFIP à utiliser (optionnel)
-#' @param orbite Le dossier du compte Constellation à utiliser (optionnel)
+#' @param code Le code à exécuter. Ce code doit être une fonction qui prend le `port` du serveur comme unique paramètre.
+#' @param ... Arguments qui seront passés directement à `constellationR::lancerServeur`.
 #'
-#' @return Le numéro de port sur lequel le le serveur écoute désormais
+#' @return Le résultat de la fonction `code`.
 #' @export
+
 avecServeur <- function(code, ...) {
   serveur <- lancerServeur(...)
   résultat <- tryCatch(
     {
-      code(serveur)
+      code(serveur$port)
     },
     error = function(cond) {
       message(cond)

@@ -5,6 +5,15 @@ préparerNomFoncMessage <- function(nomFonction) {
   return(if (length(nomFonction) > 1) nomFonction else list(nomFonction))
 }
 
+#' Représent, en R, un client Constellation.
+#' @description
+#' Cette classe se connecte à un serveur Constellation déjà ouvert. Nous vous recommandons de ne pas l'utiliser directement,
+#' mais plutôt d'appeler `constellationR::avecClientEtServeur`, ou bien `constellationR::avecClient`, lesquels
+#' s'occuperont de la création et de la fermeture du client pour vous.
+#'
+#' @field port Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.
+#'
+#' @export
 Client <- R6Class(
   "ClientConstellation",
   private = list(
@@ -253,29 +262,20 @@ Client <- R6Class(
   ),
 )
 
+#' Exécuter du code dans le contexte d'un client Constellation, et fermer le client et le serveur par la suite.
 #'
+#' @param code Le code à exécuter. Ce code doit être une fonction qui prend le `client` Constellation comme unique paramètre.
+#' @param ... Paramètres qui seront passés directement à `constellationR::avecServeur`.
+#'
+#' @return Le résultat de la fonction `code`.
 #' @export
-avecClient <- function(code, ...) {
+
+avecClientEtServeur <- function(code, ...) {
   résultat <- avecServeur(
-    function(serveur) {
-      client <- Client$new(serveur$port)
-      résultatClient <- tryCatch(
-        {
-          code(client)
-        },
-        error = function(cond) {
-          message(cond)
-          print(cond)
-          return(cond)
-        },
-        warning = function(cond) {
-          message(cond)
-          print(cond)
-          return(cond)
-        },
-        finally = {
-          client$fermer()
-        }
+    function(port) {
+      résultatClient <- avecClient(
+        code,
+        port
       )
 
       return(résultatClient)
@@ -284,4 +284,28 @@ avecClient <- function(code, ...) {
   )
 
   return(résultat)
+}
+
+
+avecClient <- function(code, port) {
+  client <- Client$new(port)
+  résultatClient <- tryCatch(
+    {
+      code(client)
+    },
+    error = function(cond) {
+      message(cond)
+      return(cond)
+    },
+    warning = function(cond) {
+      message(cond)
+      return(cond)
+    },
+    finally = {
+      client$fermer()
+    }
+  )
+
+  return(résultatClient)
+
 }
