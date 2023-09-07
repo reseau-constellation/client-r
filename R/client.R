@@ -287,6 +287,15 @@ avecClientEtServeur <- function(code, ...) {
 }
 
 
+#' Exécuter du code dans le contexte d'un client Constellation, et fermer le client par la suite. Nécessite qu'un serveur
+#' Constellation soit déjà activé sur le `port` spécifié.
+#'
+#' @param code Le code à exécuter. Ce code doit être une fonction qui prend le `client` Constellation comme unique paramètre.
+#' @param port Le port du serveur déjà ouvert.
+#'
+#' @return Le résultat de la fonction `code`.
+#' @export
+
 avecClient <- function(code, port) {
   client <- Client$new(port)
   résultatClient <- tryCatch(

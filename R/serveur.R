@@ -4,11 +4,7 @@
 #'
 #' @return La version du serveur Constellation
 #' @export
-#'
-#' @examples
-#' # Obtenir la version du serveur installé
-#' v <- obtVersionServeur()
-#' print(v)
+
 
 obtVersionServeur <- function(exe = "constl") {
   # Ou peut-être https://www.r-bloggers.com/2021/09/how-to-use-system-commands-in-your-r-script-or-package/ ?
@@ -22,11 +18,7 @@ obtVersionServeur <- function(exe = "constl") {
 #'
 #' @return La version de l'IPA Constellation
 #' @export
-#'
-#' @examples
-#' # Obtenir la version de l'IPA installée
-#' v <- obtVersionIPAConstellation()
-#' print(v)
+
 
 obtVersionIPAConstellation <- function(exe = "constl") {
   version <- system2(exe, c("v-constl"), stdout = TRUE)
@@ -52,21 +44,7 @@ installerConstellation <- function() {
 #' @return Le numéro de port sur lequel le le serveur écoute désormais, et une fonction à appeler pour fermer le serveur
 #' @export
 #'
-#' @examples
-#'
-#' # Lancer sans port défini
-#' serveur <- lancerServeur()
-#' print(serveur$port)
-#' serveur$fermer()
-#'
-#' # Lancer sur un port prédéfini (il doit être libre)
-#' serveur <- lancerServeur(port=5001)
-#' print(serveur$port)
-#' serveur$fermer()
-#'
-#' # Spécifier le dossier Orbite ou SFIP
-#' serveur <- lancerServeur(sfip="mon/dossier/SFIP", orbite="mon/dossier/bdOrbite")
-#' serveur$fermer()
+
 
 lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl") {
   # open /Applications/RStudio.app

@@ -35,16 +35,16 @@ testthat::test_that("obtenir version ipa", {
 
 testthat::test_that("lancer serveur", {
   avecServeurTest(
-    function(serveur) {
-      expect_equal(class(serveur$port), "numeric")
+    function(port) {
+      expect_equal(class(port), "numeric")
     }
   )
 })
 
 testthat::test_that("lancer serveur port spécifié", {
   avecServeurTest(
-    function(serveur) {
-      expect_equal(serveur$port, 5123)
+    function(port) {
+      expect_equal(port, 5123)
     },
     port=5123
   )
@@ -53,7 +53,7 @@ testthat::test_that("lancer serveur port spécifié", {
 testthat::test_that("lancer serveur dossier orbite spécifié", {
   dossierOrbite <- file.path(tempdir(), "monDossierOrbite")
   avecServeurTest(
-    function (serveur) {
+    function (port) {
       testthat::expect_true(dir.exists(dossierOrbite))
     },
     orbite = dossierOrbite
@@ -63,7 +63,7 @@ testthat::test_that("lancer serveur dossier orbite spécifié", {
 testthat::test_that("lancer serveur dossier sfip spécifié", {
   dossierSFIP <- file.path(tempdir(), "monDossierSFIP")
   avecServeurTest(
-    function (serveur) {
+    function (port) {
       testthat::expect_true(dir.exists(dossierSFIP))
     },
     sfip = dossierSFIP
