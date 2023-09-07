@@ -2,7 +2,7 @@
 % Please edit documentation in R/client.R
 \name{Client}
 \alias{Client}
-\title{Représent, en R, un client Constellation.}
+\title{Un client Constellation.}
 \description{
 Cette classe se connecte à un serveur Constellation déjà ouvert. Nous vous recommandons de ne pas l'utiliser directement,
 mais plutôt d'appeler `constellationR::avecClientEtServeur`, ou bien `constellationR::avecClient`, lesquels

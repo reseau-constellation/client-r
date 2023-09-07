@@ -8,6 +8,7 @@
 #   Check Package:             'Cmd + Shift + E'
 #   Test Package:              'Cmd + Shift + T'
 
+# À exécuter avant chaque sauvegarde git :
 # devtools::document()
 
 # Bonnes idées : https://www.mzes.uni-mannheim.de/socialsciencedatalab/article/r-package/#subsection5-4

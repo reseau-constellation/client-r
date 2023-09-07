@@ -1,11 +1,24 @@
+#' Prépare les paramètres d'une fonction Constellation à être envoyés par WebSocket
+#'
+#' @param paramètres La liste des paramètres
+#'
+#' @returns Soit les paramètres eux-mêmes, soit, s'ils sont vides, un `data.frame` vide
+#'
 préparerParamsFoncMessage <- function(paramètres) {
   return(if (is.null(paramètres)) data.frame() else paramètres)
 }
+
+#' Prépare le nom d'une fonction Constellation à être envoyé par WebSocket
+#'
+#' @param nomFonction Le nom de la fonction en format vecteur
+#'
+#' @returns Le nom formatté en liste si la longeur > 1, sinon le vecteur original
+#'
 préparerNomFoncMessage <- function(nomFonction) {
   return(if (length(nomFonction) > 1) nomFonction else list(nomFonction))
 }
 
-#' Représent, en R, un client Constellation.
+#' Un client Constellation.
 #' @description
 #' Cette classe se connecte à un serveur Constellation déjà ouvert. Nous vous recommandons de ne pas l'utiliser directement,
 #' mais plutôt d'appeler `constellationR::avecClientEtServeur`, ou bien `constellationR::avecClient`, lesquels
