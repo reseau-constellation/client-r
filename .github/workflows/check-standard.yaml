@@ -43,7 +43,7 @@ jobs:
       - run: echo %PNPM_HOME% >> $GITHUB_PATH
         if: startsWith(matrix.config.os, 'windows')
 
-      - run: ls %PNPM_HOME%
+      - run: ls C:\Users\runneradmin & ls C:\Users\runneradmin\setup-pnpm & ls C:\Users\runneradmin\setup-pnpm\node_modules
         if: startsWith(matrix.config.os, 'windows')
 
       - name: Add to PATH
