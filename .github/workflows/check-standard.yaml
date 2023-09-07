@@ -39,8 +39,18 @@ jobs:
         with:
           version: latest
 
+      # https://stackoverflow.com/questions/68211182/how-to-set-system-path-variable-in-github-action-workflow
       - run: echo %PNPM_HOME% >> $GITHUB_PATH
         if: startsWith(matrix.config.os, 'windows')
+
+      - run: ls %PNPM_HOME%
+        if: startsWith(matrix.config.os, 'windows')
+
+      - name: Add to PATH
+        if: startsWith(matrix.config.os, 'windows')
+        shell: pwsh
+        run: |
+          echo %PNPM_HOME% | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - run: echo %PATH%
         if: startsWith(matrix.config.os, 'windows')
