@@ -39,4 +39,16 @@
   <url>
     <loc>https://reseau-constellation.github.io/client-r/reference/obtVersionServeur.html</loc>
   </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/pr-parerNomFoncMessage.html</loc>
+  </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/pr-parerParamsFoncMessage.html</loc>
+  </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/r-soudreNomFonction.html</loc>
+  </url>
+  <url>
+    <loc>https://reseau-constellation.github.io/client-r/reference/r-soudreTypeFonction.html</loc>
+  </url>
 </urlset>
