@@ -57,17 +57,7 @@ jobs:
       - run: where.exe constl
         if: startsWith(matrix.config.os, 'windows')
 
-      - run: ls C:\Users\runneradmin
-        if: startsWith(matrix.config.os, 'windows')
-
-
-
-      - run: ls C:\Users\runneradmin\setup-pnpm
-        if: startsWith(matrix.config.os, 'windows')
-
-
-
-      - run: ls C:\Users\runneradmin\setup-pnpm\node_modules
+      - run: ls C:\Users\runneradmin\setup-pnpm\node_modules\.bin
         if: startsWith(matrix.config.os, 'windows')
 
 
