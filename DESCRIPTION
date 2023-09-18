@@ -9,7 +9,7 @@ Description: Un client R qui vous permet d'accéder le réseau Constellation de 
 License: AGPL (>= 3)
 URL: https://github.com/reseau-constellation/client-r,
     https://reseau-constellation.github.io/client-r/
-BugReports: https://github.com/reseau-constellation/issues
+BugReports: https://github.com/reseau-constellation/client-r/issues
 Imports:
     websocket (>= 1.4.1),
     R6,
