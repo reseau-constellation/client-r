@@ -5,7 +5,7 @@
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/reseau-constellation/client-r/workflows/R-CMD-check/badge.svg)](https://github.com/reseau-constellation/client-r/actions)
 [![R-CMD-check](https://github.com/reseau-constellation/client-r/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/reseau-constellation/client-r/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/github/reseau-constellation/client-r/graph/badge.svg?token=U2MUE2ZLGO)](https://codecov.io/github/reseau-constellation/client-r)
+[![codecov](https://codecov.io/github/reseau-constellation/client-r/graph/badge.svg?token=U2MUE2ZLGO)](https://app.codecov.io/github/reseau-constellation/client-r)
 <!-- badges: end -->
 
 `constellationR` est un paquet R pour interagir avec le logiciel Constellation pour le partage de données scientifiques distribuées.
