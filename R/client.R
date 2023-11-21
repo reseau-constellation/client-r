@@ -154,7 +154,7 @@ Client <- R6Class(
       return(résultat)
     },
 
-    suivre = function(fonction, paramètres = NULL, nomArgFonction='f') {
+    suivre = function(fonction, paramètres = NULL, nomArgFonction='f', condition=function(x) !is.null(x)) {
       nomFonction <- résoudreNomFonction(fonction)
       id <- uuid::UUIDgenerate()
 
@@ -192,7 +192,7 @@ Client <- R6Class(
       if (appelléAvecFonction) {
         return(fOublier)
       } else {
-        retry::wait_until(!is.null(résultatSuivi), timeout = 15)
+        retry::wait_until(condition(résultatSuivi), timeout = 15)
         fOublier()
         return(résultatSuivi)
       }
