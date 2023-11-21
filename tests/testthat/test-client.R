@@ -54,7 +54,7 @@ avecClientEtServeurTest(
     testthat::test_that("Recherche", {
       variablesTrouvées <- NULL
       f <- function(résultats) {
-        variablesTrouvées <<- vapply(résultats, (\(x) x$id))
+        variablesTrouvées <<- sapply(résultats, (\(x) x$id))
       }
       retour <- client$rechercher(
         "recherche.rechercherVariablesSelonNom",
@@ -121,7 +121,7 @@ avecClientEtServeurTest(
     testthat::test_that("Appeler recherche", {
       variablesTrouvées <- NULL
       f <- function(résultats) {
-        variablesTrouvées <<- vapply(résultats, (\(x) x$id))
+        variablesTrouvées <<- sapply(résultats, (\(x) x$id))
       }
       retour <- client$appeler(
         "recherche.rechercherVariablesSelonNom",
