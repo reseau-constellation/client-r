@@ -57,22 +57,6 @@ s'occuperont de la création et de la fermeture du client pour vous.</p>
 
 
     <div class="section level2">
-    <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
-    <p></p><div class="r6-fields"><dl><dt><code>port</code></dt>
-<dd><p>Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.</p></dd>
-
-
-</dl><p></p></div>
-    </div>
-    <div class="section level2">
-    <h2 id="active-bindings">Active bindings<a class="anchor" aria-label="anchor" href="#active-bindings"></a></h2>
-    <p></p><div class="r6-active-bindings"><dl><dt><code>port</code></dt>
-<dd><p>Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.</p></dd>
-
-
-</dl><p></p></div>
-    </div>
-    <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
     
 <div class="section">
@@ -84,6 +68,8 @@ s'occuperont de la création et de la fermeture du client pour vous.</p>
 <li><p><a href="#method-ClientConstellation-rechercher"><code>Client$rechercher()</code></a></p></li>
 <li><p><a href="#method-ClientConstellation-appeler"><code>Client$appeler()</code></a></p></li>
 <li><p><a href="#method-ClientConstellation-enregistrer%C3%89coute"><code>Client$enregistrerÉcoute()</code></a></p></li>
+<li><p><a href="#method-ClientConstellation-obtDonn%C3%A9esTableau"><code>Client$obtDonnéesTableau()</code></a></p></li>
+<li><p><a href="#method-ClientConstellation-obtDonn%C3%A9esTableauNu%C3%A9e"><code>Client$obtDonnéesTableauNuée()</code></a></p></li>
 <li><p><a href="#method-ClientConstellation-fermer"><code>Client$fermer()</code></a></p></li>
 <li><p><a href="#method-ClientConstellation-clone"><code>Client$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-ClientConstellation-new"></a><div class="section">
@@ -94,42 +80,181 @@ s'occuperont de la création et de la fermeture du client pour vous.</p>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Client.html">Client</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">port</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+<div class="section">
+<h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>port</code></dt>
+<dd><p>Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.</p>
+<p>Fonction pour invoquer un action sur Constellation.</p></dd>
+
+
+</dl><p></p></div>
+</div>
 
 </div><p></p><hr><a id="method-ClientConstellation-action"></a><div class="section">
 <h3 id="method-action-">Method <code>action()</code><a class="anchor" aria-label="anchor" href="#method-action-"></a></h3>
 
 <div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span><span class="va">fonction</span>, paramètres <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span><span class="va">fonction</span>, paramètres <span class="op">=</span> <span class="cn">NULL</span>, patience <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+<div class="section">
+<h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>fonction</code></dt>
+<dd><p>Le nom de la fonction à invoquer (p. ex., "variables.créerVariable")</p></dd>
+
+
+<dt><code>paramètres</code></dt>
+<dd><p>Liste nommée avec les paramètres de la fonction</p></dd>
+
+
+<dt><code>patience</code></dt>
+<dd><p>Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
+<p>Le résultat ded la fonction invoquée.</p>
+<p>Fonction pour invoquer un suivi sur Constellation.</p>
+</div>
 
 </div><p></p><hr><a id="method-ClientConstellation-suivre"></a><div class="section">
 <h3 id="method-suivre-">Method <code>suivre()</code><a class="anchor" aria-label="anchor" href="#method-suivre-"></a></h3>
 
 <div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">suivre</span><span class="op">(</span><span class="va">fonction</span>, paramètres <span class="op">=</span> <span class="cn">NULL</span>, nomArgFonction <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">suivre</span><span class="op">(</span></span>
+<span>  <span class="va">fonction</span>,</span>
+<span>  paramètres <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nomArgFonction <span class="op">=</span> <span class="st">"f"</span>,</span>
+<span>  condition <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
+<span>  patience <span class="op">=</span> <span class="fl">15</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+<div class="section">
+<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>fonction</code></dt>
+<dd><p>Le nom de la fonction à invoquer (p. ex., "profil.suivreNoms")</p></dd>
+
+
+<dt><code>paramètres</code></dt>
+<dd><p>Liste nommée avec les paramètres de la fonction</p></dd>
+
+
+<dt><code>nomArgFonction</code></dt>
+<dd><p>Le nom du paramètre correspondant à la
+fonction de suivi (voir documentation IPA Constellation).
+"f" par défaut.</p></dd>
+
+
+<dt><code>condition</code></dt>
+<dd><p>Condition nécessaire pour valider le premier résultat
+à retourner. Uniquement utilisé si `paramètres[[nomArgFonction]]` n'existe pas.</p></dd>
+
+
+<dt><code>patience</code></dt>
+<dd><p>Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
+<p>Si `paramètres[[nomArgFonction]]` existe, cette fonction sera invoqué de manière
+continue chaque fois que les résultats changent, et la fonction
+`suivre` elle-même retournera une fonction pour annuler le suivi.
+Si `paramètres[[nomArgFonction]]` n'existe pas, retourne le premier résultat obtenu.</p>
+<p>Fonction pour invoquer une recherche sur Constellation.</p>
+</div>
 
 </div><p></p><hr><a id="method-ClientConstellation-rechercher"></a><div class="section">
 <h3 id="method-rechercher-">Method <code>rechercher()</code><a class="anchor" aria-label="anchor" href="#method-rechercher-"></a></h3>
 
 <div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">rechercher</span><span class="op">(</span><span class="va">fonction</span>, <span class="va">paramètres</span>, nomArgFonction <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">rechercher</span><span class="op">(</span><span class="va">fonction</span>, <span class="va">paramètres</span>, nomArgFonction <span class="op">=</span> <span class="st">"f"</span>, patience <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+<div class="section">
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>fonction</code></dt>
+<dd><p>Le nom de la fonction à invoquer (p. ex., "recherche.rechercherVariablesSelonNom")</p></dd>
+
+
+<dt><code>paramètres</code></dt>
+<dd><p>Liste nommée avec les paramètres de la fonction</p></dd>
+
+
+<dt><code>nomArgFonction</code></dt>
+<dd><p>Le nom du paramètre correspondant à la fonction
+de suivi (voir documentation IPA Constellation).
+"f" par défaut.</p></dd>
+
+
+<dt><code>patience</code></dt>
+<dd><p>Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
+<p>Si `paramètres[[nomArgFonction]]` existe, cette fonction sera invoqué de manière
+continue chaque fois que les résultats de la recherche changent, et la fonction
+`recherche` elle-même retournera des fonctions pour annuler la recherche et pour
+changer le nombre de résultats désirés. Si `paramètres[[nomArgFonction]]` n'existe
+pas, retourne le premier résultat obtenu par la recherche.</p>
+<p>Fonction pour invoquer une fonction (action, recherche, ou suivi)
+de Constellation.</p>
+</div>
 
 </div><p></p><hr><a id="method-ClientConstellation-appeler"></a><div class="section">
 <h3 id="method-appeler-">Method <code>appeler()</code><a class="anchor" aria-label="anchor" href="#method-appeler-"></a></h3>
 
 <div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">appeler</span><span class="op">(</span><span class="va">fonction</span>, paramètres <span class="op">=</span> <span class="cn">NULL</span>, nomArgFonction <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">appeler</span><span class="op">(</span></span>
+<span>  <span class="va">fonction</span>,</span>
+<span>  paramètres <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nomArgFonction <span class="op">=</span> <span class="st">"f"</span>,</span>
+<span>  patience <span class="op">=</span> <span class="fl">45</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+<div class="section">
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>fonction</code></dt>
+<dd><p>Le nom de la fonction à invoquer (p. ex., "bds.créerBd")</p></dd>
+
+
+<dt><code>paramètres</code></dt>
+<dd><p>Liste nommée avec les paramètres de la fonction, si approprié</p></dd>
+
+
+<dt><code>nomArgFonction</code></dt>
+<dd><p>S'il s'agit d'un fonction de suivi ou de recherche, le nom du paramètre
+correspondant à la fonction de suivi (voir documentation IPA Constellation).
+"f" par défaut.</p></dd>
+
+
+<dt><code>patience</code></dt>
+<dd><p>Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
+<p>Le résultat de la fonction</p>
+<p>Méthode privée. Touche pas.</p>
+</div>
 
 </div><p></p><hr><a id="method-ClientConstellation-enregistrerÉcoute"></a><div class="section">
 <h3 id="method-enregistrer-coute-">Method <code>enregistrerÉcoute()</code><a class="anchor" aria-label="anchor" href="#method-enregistrer-coute-"></a></h3>
@@ -139,12 +264,98 @@ s'occuperont de la création et de la fermeture du client pour vous.</p>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">enregistrerÉcoute</span><span class="op">(</span><span class="va">id</span>, <span class="va">résoudre</span>, <span class="va">rejeter</span>, f <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+<div class="section">
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>id</code></dt>
+<dd><p>Identifiant unique</p></dd>
+
+
+<dt><code>résoudre</code></dt>
+<dd><p>Fonction résolution</p></dd>
+
+
+<dt><code>rejeter</code></dt>
+<dd><p>Fonction rejet</p></dd>
+
+
+<dt><code>f</code></dt>
+<dd><p>Fonction de suivi</p>
+<p>Fonction rapide pour obtenir des données d'un tableau en format tibble</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-ClientConstellation-obtDonnéesTableau"></a><div class="section">
+<h3 id="method-obtdonn-estableau-">Method <code>obtDonnéesTableau()</code><a class="anchor" aria-label="anchor" href="#method-obtdonn-estableau-"></a></h3>
+
+<div class="section">
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">obtDonnéesTableau</span><span class="op">(</span><span class="va">idTableau</span>, langues <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>idTableau</code></dt>
+<dd><p>L'identifiant du tableau</p></dd>
+
+
+<dt><code>langues</code></dt>
+<dd><p>Liste optionnelle des langues (en ordre de préférence) dans lesquelles on veut obtenir les résultats</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
+<p>Les données en format tibble::tibble</p>
+<p>Fonction rapide pour obtenir des données d'une nuée en format tibble</p>
+</div>
+
+</div><p></p><hr><a id="method-ClientConstellation-obtDonnéesTableauNuée"></a><div class="section">
+<h3 id="method-obtdonn-estableaunu-e-">Method <code>obtDonnéesTableauNuée()</code><a class="anchor" aria-label="anchor" href="#method-obtdonn-estableaunu-e-"></a></h3>
+
+<div class="section">
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">obtDonnéesTableauNuée</span><span class="op">(</span></span>
+<span>  <span class="va">idNuée</span>,</span>
+<span>  <span class="va">clefTableau</span>,</span>
+<span>  nRésultatsDésirés <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  langues <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>idNuée</code></dt>
+<dd><p>L'identifiant de la nuée</p></dd>
+
+
+<dt><code>clefTableau</code></dt>
+<dd><p>La clef du tableau d'intérêt</p></dd>
+
+
+<dt><code>nRésultatsDésirés</code></dt>
+<dd><p>Le nombre de résultats désirés</p></dd>
+
+
+<dt><code>langues</code></dt>
+<dd><p>Liste optionnelle des langues (en ordre de préférence) dans lesquelles on veut obtenir les résultats</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<p>Les données en format tibble::tibble</p>
+<p>Fermer le client</p>
+</div>
 
 </div><p></p><hr><a id="method-ClientConstellation-fermer"></a><div class="section">
 <h3 id="method-fermer-">Method <code>fermer()</code><a class="anchor" aria-label="anchor" href="#method-fermer-"></a></h3>
 
 <div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">fermer</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -152,12 +363,12 @@ s'occuperont de la création et de la fermeture du client pour vous.</p>
 </div><p></p><hr><a id="method-ClientConstellation-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Client</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
