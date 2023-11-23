@@ -50,11 +50,16 @@ résoudreNomFonction <- function(nomFonction) {
 #' @return Une trame de données en format tibble R
 #'
 #' @examples
-#' données <- jsonlite::fromJSON("{\"données\":[{\"a050decf-fc58-4283-8b85-0b791041aaa9\":123},{\"6a5dfef5-2e7e-46c2-bbe0-134cce21fd66\":\"abc\",\"a050decf-fc58-4283-8b85-0b791041aaa9\":456}]}", simplifyDataFrame = FALSE)
+#' données <- jsonlite::fromJSON("{
+#'   \"données\":[{
+#'     \"col1\":123},{\"col2\":\"abc\",\"col1\":456}
+#'    ]}"
+#'   , simplifyDataFrame = FALSE
+#'  )
 #' td <- donnéesTableauÀTrame(données["données"])
 #'
 donnéesTableauÀTrame <- function(données) {
-  colonnes <- unique(unlist(sapply(données[[1]], function (x) names(x))))
+  colonnes <- unique(unlist(as.vector(sapply(données[[1]], function (x) names(x)))))
   nRangées <- length(données[[1]])
 
   trame_données <- data.frame(matrix(nrow=nRangées, ncol=length(colonnes)))
@@ -62,6 +67,28 @@ donnéesTableauÀTrame <- function(données) {
   for (colonne in colonnes) {
     trame_données[[colonne]] <- sapply(données[[1]], function (x) if (is.null(x[[colonne]])) NA else x[[colonne]])
   }
-
   return(as_tibble(trame_données))
+}
+
+#' Transforme des données de nuée de format Constellation en
+#' format de trame de données tibble R.
+#'
+#' @param données Les données provenant de Constellation
+#'
+#' @return Une trame de données en format tibble R
+#'
+#' @examples
+#' données <- jsonlite::fromJSON(
+#'   "{\"données\":[
+#'      {\"col1\":123,
+#'      \"auteur\": \"/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH\"},
+#'      {\"col2\":\"abc\",\"col1\":456,
+#'      \"auteur\": \"/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH\"
+#'      }]}",
+#'   simplifyDataFrame = FALSE
+#'  )
+#' td <- donnéesTableauÀTrame(données["données"])
+#'
+donnéesNuéeÀTrame <- function(données) {
+  return(donnéesTableauÀTrame(données))
 }

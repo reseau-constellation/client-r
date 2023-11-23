@@ -8,20 +8,6 @@ Cette classe se connecte à un serveur Constellation déjà ouvert. Nous vous re
 mais plutôt d'appeler `constellationR::avecClientEtServeur`, ou bien `constellationR::avecClient`, lesquels
 s'occuperont de la création et de la fermeture du client pour vous.
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{port}}{Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.}
-}
-\if{html}{\out{</div>}}
-}
-\section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{port}}{Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -31,6 +17,8 @@ s'occuperont de la création et de la fermeture du client pour vous.
 \item \href{#method-ClientConstellation-rechercher}{\code{Client$rechercher()}}
 \item \href{#method-ClientConstellation-appeler}{\code{Client$appeler()}}
 \item \href{#method-ClientConstellation-enregistrerÉcoute}{\code{Client$enregistrerÉcoute()}}
+\item \href{#method-ClientConstellation-obtDonnéesTableau}{\code{Client$obtDonnéesTableau()}}
+\item \href{#method-ClientConstellation-obtDonnéesTableauNuée}{\code{Client$obtDonnéesTableauNuée()}}
 \item \href{#method-ClientConstellation-fermer}{\code{Client$fermer()}}
 \item \href{#method-ClientConstellation-clone}{\code{Client$clone()}}
 }
@@ -43,42 +31,153 @@ s'occuperont de la création et de la fermeture du client pour vous.
 \if{html}{\out{<div class="r">}}\preformatted{Client$new(port)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{port}}{Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.
+
+Fonction pour invoquer un action sur Constellation.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ClientConstellation-action"></a>}}
 \if{latex}{\out{\hypertarget{method-ClientConstellation-action}{}}}
 \subsection{Method \code{action()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Client$action(fonction, paramètres = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Client$action(fonction, paramètres = NULL, patience = 15)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fonction}}{Le nom de la fonction à invoquer (p. ex., "variables.créerVariable")}
+
+\item{\code{paramètres}}{Liste nommée avec les paramètres de la fonction}
+
+\item{\code{patience}}{Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Le résultat ded la fonction invoquée.
+
+Fonction pour invoquer un suivi sur Constellation.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ClientConstellation-suivre"></a>}}
 \if{latex}{\out{\hypertarget{method-ClientConstellation-suivre}{}}}
 \subsection{Method \code{suivre()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Client$suivre(fonction, paramètres = NULL, nomArgFonction = "f")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Client$suivre(
+  fonction,
+  paramètres = NULL,
+  nomArgFonction = "f",
+  condition = function(x) !is.null(x),
+  patience = 15
+)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fonction}}{Le nom de la fonction à invoquer (p. ex., "profil.suivreNoms")}
+
+\item{\code{paramètres}}{Liste nommée avec les paramètres de la fonction}
+
+\item{\code{nomArgFonction}}{Le nom du paramètre correspondant à la
+fonction de suivi (voir documentation IPA Constellation).
+"f" par défaut.}
+
+\item{\code{condition}}{Condition nécessaire pour valider le premier résultat
+à retourner. Uniquement utilisé si `paramètres[[nomArgFonction]]` n'existe pas.}
+
+\item{\code{patience}}{Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Si `paramètres[[nomArgFonction]]` existe, cette fonction sera invoqué de manière
+continue chaque fois que les résultats changent, et la fonction
+`suivre` elle-même retournera une fonction pour annuler le suivi.
+Si `paramètres[[nomArgFonction]]` n'existe pas, retourne le premier résultat obtenu.
+
+Fonction pour invoquer une recherche sur Constellation.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ClientConstellation-rechercher"></a>}}
 \if{latex}{\out{\hypertarget{method-ClientConstellation-rechercher}{}}}
 \subsection{Method \code{rechercher()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Client$rechercher(fonction, paramètres, nomArgFonction = "f")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Client$rechercher(fonction, paramètres, nomArgFonction = "f", patience = 15)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fonction}}{Le nom de la fonction à invoquer (p. ex., "recherche.rechercherVariablesSelonNom")}
+
+\item{\code{paramètres}}{Liste nommée avec les paramètres de la fonction}
+
+\item{\code{nomArgFonction}}{Le nom du paramètre correspondant à la fonction
+de suivi (voir documentation IPA Constellation).
+"f" par défaut.}
+
+\item{\code{patience}}{Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Si `paramètres[[nomArgFonction]]` existe, cette fonction sera invoqué de manière
+continue chaque fois que les résultats de la recherche changent, et la fonction
+`recherche` elle-même retournera des fonctions pour annuler la recherche et pour
+changer le nombre de résultats désirés. Si `paramètres[[nomArgFonction]]` n'existe
+pas, retourne le premier résultat obtenu par la recherche.
+
+Fonction pour invoquer une fonction (action, recherche, ou suivi)
+de Constellation.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ClientConstellation-appeler"></a>}}
 \if{latex}{\out{\hypertarget{method-ClientConstellation-appeler}{}}}
 \subsection{Method \code{appeler()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Client$appeler(fonction, paramètres = NULL, nomArgFonction = "f")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Client$appeler(
+  fonction,
+  paramètres = NULL,
+  nomArgFonction = "f",
+  patience = 45
+)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fonction}}{Le nom de la fonction à invoquer (p. ex., "bds.créerBd")}
+
+\item{\code{paramètres}}{Liste nommée avec les paramètres de la fonction, si approprié}
+
+\item{\code{nomArgFonction}}{S'il s'agit d'un fonction de suivi ou de recherche, le nom du paramètre
+correspondant à la fonction de suivi (voir documentation IPA Constellation).
+"f" par défaut.}
+
+\item{\code{patience}}{Le nombre de secondes qu'on va attendre pour une réponse
+avant de perdre patience.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Le résultat de la fonction
+
+Méthode privée. Touche pas.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ClientConstellation-enregistrerÉcoute"></a>}}
@@ -88,6 +187,76 @@ s'occuperont de la création et de la fermeture du client pour vous.
 \if{html}{\out{<div class="r">}}\preformatted{Client$enregistrerÉcoute(id, résoudre, rejeter, f = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{Identifiant unique}
+
+\item{\code{résoudre}}{Fonction résolution}
+
+\item{\code{rejeter}}{Fonction rejet}
+
+\item{\code{f}}{Fonction de suivi
+
+Fonction rapide pour obtenir des données d'un tableau en format tibble}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ClientConstellation-obtDonnéesTableau"></a>}}
+\if{latex}{\out{\hypertarget{method-ClientConstellation-obtDonnéesTableau}{}}}
+\subsection{Method \code{obtDonnéesTableau()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Client$obtDonnéesTableau(idTableau, langues = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{idTableau}}{L'identifiant du tableau}
+
+\item{\code{langues}}{Liste optionnelle des langues (en ordre de préférence) dans lesquelles on veut obtenir les résultats}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Les données en format tibble::tibble
+
+Fonction rapide pour obtenir des données d'une nuée en format tibble
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ClientConstellation-obtDonnéesTableauNuée"></a>}}
+\if{latex}{\out{\hypertarget{method-ClientConstellation-obtDonnéesTableauNuée}{}}}
+\subsection{Method \code{obtDonnéesTableauNuée()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Client$obtDonnéesTableauNuée(
+  idNuée,
+  clefTableau,
+  nRésultatsDésirés = 100,
+  langues = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{idNuée}}{L'identifiant de la nuée}
+
+\item{\code{clefTableau}}{La clef du tableau d'intérêt}
+
+\item{\code{nRésultatsDésirés}}{Le nombre de résultats désirés}
+
+\item{\code{langues}}{Liste optionnelle des langues (en ordre de préférence) dans lesquelles on veut obtenir les résultats}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Les données en format tibble::tibble
+
+Fermer le client
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ClientConstellation-fermer"></a>}}

@@ -21,11 +21,49 @@ testthat::test_that("Auto-détection type recherche", {
   testthat::expect_equal(résolu, "recherche")
 })
 
-testthat::test_that("Conversion données tableau", {
+testthat::test_that("Conversion données tableau - une valeur vide", {
   données <- jsonlite::fromJSON(
     "{\"données\":[{\"col1\":123},{\"col2\":\"abc\",\"col1\":456}]}",
     simplifyDataFrame = FALSE
   )
   td <- donnéesTableauÀTrame(données["données"])
-  testthat::expect_equal(td, tibble(col1=c(123, 456), col2=c(NA, "abc")))
+  testthat::expect_equal(td, tibble::tibble(col1=c(123, 456), col2=c(NA, "abc")))
+})
+
+testthat::test_that("Conversion données tableau - données vides", {
+  données <- jsonlite::fromJSON(
+    "{\"données\":[]}",
+    simplifyDataFrame = FALSE
+  )
+  td <- donnéesTableauÀTrame(données["données"])
+  testthat::expect_equal(td, tibble::tibble())
+})
+
+testthat::test_that("Conversion données nuées - toutes valeurs présentes", {
+  auteur <- "/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH"
+  données <- jsonlite::fromJSON(
+    "{\"données\":[{\"col1\":123,\"auteur\":\"/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH\"},{\"col1\":456,\"auteur\":\"/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH\"}]}",
+    simplifyDataFrame = FALSE
+  )
+  td <- donnéesTableauÀTrame(données["données"])
+  testthat::expect_equal(td, tibble(col1=c(123, 456), auteur=c(auteur, auteur)))
+})
+
+testthat::test_that("Conversion données nuées - une valeur vide", {
+  auteur <- "/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH"
+  données <- jsonlite::fromJSON(
+    "{\"données\":[{\"col1\":123,\"auteur\":\"/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH\"},{\"col1\":456,\"col2\":\"abc\",\"auteur\":\"/orbitdb/zdpuB1wjvzSEsY9YZ4Z2kUEX2DLzwV9G8LCQnzfLccHgY1LdH\"}]}",
+    simplifyDataFrame = FALSE
+  )
+  td <- donnéesTableauÀTrame(données["données"])
+  testthat::expect_equal(td, tibble::tibble(col1=c(123, 456), auteur=c(auteur, auteur), col2=c(NA, "abc")))
+})
+
+testthat::test_that("Conversion données nuée - données vides", {
+  données <- jsonlite::fromJSON(
+    "{\"données\":[]}",
+    simplifyDataFrame = FALSE
+  )
+  td <- donnéesTableauÀTrame(données["données"])
+  testthat::expect_equal(td, tibble::tibble())
 })

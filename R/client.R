@@ -32,7 +32,6 @@ préparerNomFoncMessage <- function(nomFonction) {
 #' mais plutôt d'appeler `constellationR::avecClientEtServeur`, ou bien `constellationR::avecClient`, lesquels
 #' s'occuperont de la création et de la fermeture du client pour vous.
 #'
-#' @field port Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.
 #'
 #' @export
 Client <- R6Class(
@@ -47,6 +46,9 @@ Client <- R6Class(
   ),
 
   public = list(
+    #'
+    #' @param port Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.
+    #'
     initialize = function(
       port
     ) {
@@ -132,7 +134,16 @@ Client <- R6Class(
 
     },
 
-    action = function(fonction, paramètres = NULL) {
+    #' Fonction pour invoquer un action sur Constellation.
+    #'
+    #' @param fonction Le nom de la fonction à invoquer (p. ex., "variables.créerVariable")
+    #' @param paramètres Liste nommée avec les paramètres de la fonction
+    #' @param patience Le nombre de secondes qu'on va attendre pour une réponse
+    #' avant de perdre patience.
+    #'
+    #' @return Le résultat ded la fonction invoquée.
+    #'
+    action = function(fonction, paramètres = NULL, patience = 15) {
       nomFonction <- résoudreNomFonction(fonction)
 
       id <- uuid::UUIDgenerate()
@@ -156,12 +167,29 @@ Client <- R6Class(
 
       private$envoyerMessage(messageAction)
 
-      retry::wait_until(isTRUE(résultatReçu), timeout = 30)
+      retry::wait_until(isTRUE(résultatReçu), timeout = patience)
 
       return(résultat)
     },
 
-    suivre = function(fonction, paramètres = NULL, nomArgFonction='f', condition=function(x) !is.null(x)) {
+    #' Fonction pour invoquer un suivi sur Constellation.
+    #'
+    #' @param fonction Le nom de la fonction à invoquer (p. ex., "profil.suivreNoms")
+    #' @param paramètres Liste nommée avec les paramètres de la fonction
+    #' @param nomArgFonction Le nom du paramètre correspondant à la
+    #' fonction de suivi (voir documentation IPA Constellation).
+    #' "f" par défaut.
+    #' @param condition Condition nécessaire pour valider le premier résultat
+    #' à retourner. Uniquement utilisé si `paramètres[[nomArgFonction]]` n'existe pas.
+    #' @param patience Le nombre de secondes qu'on va attendre pour une réponse
+    #' avant de perdre patience.
+    #'
+    #' @return Si `paramètres[[nomArgFonction]]` existe, cette fonction sera invoqué de manière
+    #' continue chaque fois que les résultats changent, et la fonction
+    #' `suivre` elle-même retournera une fonction pour annuler le suivi.
+    #' Si `paramètres[[nomArgFonction]]` n'existe pas, retourne le premier résultat obtenu.
+    #'
+    suivre = function(fonction, paramètres = NULL, nomArgFonction='f', condition=function(x) !is.null(x), patience = 15) {
       nomFonction <- résoudreNomFonction(fonction)
       id <- uuid::UUIDgenerate()
 
@@ -194,19 +222,35 @@ Client <- R6Class(
       )
 
       private$envoyerMessage(messageSuivi)
-      retry::wait_until(!is.null(fOublier), timeout = 30)
+      retry::wait_until(!is.null(fOublier), timeout = patience)
 
       if (appelléAvecFonction) {
         return(fOublier)
       } else {
-        retry::wait_until(condition(résultatSuivi), timeout = 30)
+        retry::wait_until(condition(résultatSuivi), timeout = patience)
         fOublier()
         return(résultatSuivi)
       }
 
     },
 
-    rechercher = function(fonction, paramètres, nomArgFonction = "f") {
+    #' Fonction pour invoquer une recherche sur Constellation.
+    #'
+    #' @param fonction Le nom de la fonction à invoquer (p. ex., "recherche.rechercherVariablesSelonNom")
+    #' @param paramètres Liste nommée avec les paramètres de la fonction
+    #' @param nomArgFonction Le nom du paramètre correspondant à la fonction
+    #' de suivi (voir documentation IPA Constellation).
+    #' "f" par défaut.
+    #' @param patience Le nombre de secondes qu'on va attendre pour une réponse
+    #' avant de perdre patience.
+    #'
+    #' @return Si `paramètres[[nomArgFonction]]` existe, cette fonction sera invoqué de manière
+    #' continue chaque fois que les résultats de la recherche changent, et la fonction
+    #' `recherche` elle-même retournera des fonctions pour annuler la recherche et pour
+    #' changer le nombre de résultats désirés. Si `paramètres[[nomArgFonction]]` n'existe
+    #' pas, retourne le premier résultat obtenu par la recherche.
+    #'
+    rechercher = function(fonction, paramètres, nomArgFonction = "f", patience = 15) {
       nomFonction <- résoudreNomFonction(fonction)
       id <- uuid::UUIDgenerate()
 
@@ -239,43 +283,70 @@ Client <- R6Class(
       )
 
       private$envoyerMessage(messageSuivi)
-      retry::wait_until(!is.null(retour), timeout = 30)
+      retry::wait_until(!is.null(retour), timeout = patience)
 
       if (appelléAvecFonction) {
         return(retour)
       } else {
-        retry::wait_until(!is.null(résultatRecherche), timeout = 30)
+        retry::wait_until(!is.null(résultatRecherche), timeout = patience)
         retour$fOublier()
         return(résultatRecherche)
       }
 
     },
 
-    appeler = function(fonction, paramètres = NULL, nomArgFonction='f') {
+    #' Fonction pour invoquer une fonction (action, recherche, ou suivi)
+    #' de Constellation.
+    #'
+    #' @param fonction Le nom de la fonction à invoquer (p. ex., "bds.créerBd")
+    #' @param paramètres Liste nommée avec les paramètres de la fonction, si approprié
+    #' @param nomArgFonction S'il s'agit d'un fonction de suivi ou de recherche, le nom du paramètre
+    #' correspondant à la fonction de suivi (voir documentation IPA Constellation).
+    #' "f" par défaut.
+    #' @param patience Le nombre de secondes qu'on va attendre pour une réponse
+    #' avant de perdre patience.
+    #'
+    #' @return Le résultat de la fonction
+    #'
+    appeler = function(fonction, paramètres = NULL, nomArgFonction='f', patience = 45) {
       typeFonction <- constellationR::résoudreTypeFonction(fonction)
       if (typeFonction == "action") {
         return(
-          self$action(fonction=fonction, paramètres = paramètres)
+          self$action(fonction=fonction, paramètres = paramètres, patience = patience)
           )
       } else if (typeFonction == "suivi") {
         return(
           self$suivre(
-            fonction=fonction, paramètres = paramètres, nomArgFonction = nomArgFonction
+            fonction=fonction, paramètres = paramètres, nomArgFonction = nomArgFonction, patience = patience
             )
         )
       } else if (typeFonction == "recherche") {
         return(
           self$rechercher(
-            fonction = fonction, paramètres = paramètres, nomArgFonction=nomArgFonction
+            fonction = fonction, paramètres = paramètres, nomArgFonction=nomArgFonction, patience = patience
             )
         )
       }
     },
 
+    #' Méthode privée. Touche pas.
+    #'
+    #' @param id Identifiant unique
+    #' @param résoudre Fonction résolution
+    #' @param rejeter Fonction rejet
+    #' @param f Fonction de suivi
+    #'
     enregistrerÉcoute = function(id, résoudre, rejeter, f=NULL) {
       private$écouteurs[[id]] <- list(résoudre=résoudre, rejeter=rejeter, f=f)
     },
 
+    #' Fonction rapide pour obtenir des données d'un tableau en format tibble
+    #'
+    #' @param idTableau L'identifiant du tableau
+    #' @param langues Liste optionnelle des langues (en ordre de préférence) dans lesquelles on veut obtenir les résultats
+    #'
+    #' @return Les données en format tibble::tibble
+    #'
     obtDonnéesTableau = function(idTableau, langues=NULL) {
       données <- self$suivre(
         "tableaux.suivreDonnéesExportation",
@@ -286,6 +357,33 @@ Client <- R6Class(
       return(td)
     },
 
+    #' Fonction rapide pour obtenir des données d'une nuée en format tibble
+    #'
+    #' @param idNuée L'identifiant de la nuée
+    #' @param clefTableau La clef du tableau d'intérêt
+    #' @param langues Liste optionnelle des langues (en ordre de préférence) dans lesquelles on veut obtenir les résultats
+    #' @param nRésultatsDésirés Le nombre de résultats désirés
+    #'
+    #' @return Les données en format tibble::tibble
+    #'
+    obtDonnéesTableauNuée = function(
+      idNuée, clefTableau, nRésultatsDésirés=100, langues=NULL
+    ) {
+      données <- self$suivre(
+        "nuées.suivreDonnéesExportationTableau",
+        paramètres = list(
+          idNuée=idNuée,
+          clefTableau=clefTableau,
+          nRésultatsDésirés=nRésultatsDésirés,
+          langues=langues
+        )
+      )
+
+      return(donnéesNuéeÀTrame(données["données"]))
+    },
+
+    #' Fermer le client
+    #'
     fermer = function() {
       private$ws$close()
     }

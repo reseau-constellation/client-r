@@ -18,7 +18,8 @@ Imports:
     stringi,
     jsonlite,
     processx,
-    dplyr
+    dplyr,
+    tibble,
 Language: fr
 Encoding: UTF-8
 LazyData: true  
