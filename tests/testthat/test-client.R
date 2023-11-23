@@ -144,21 +144,36 @@ avecClientEtServeurTest(
         "variables.créerVariable",
         list(catégorie="numérique")
       )
+      idVarC <- client$appeler(
+        "variables.créerVariable",
+        list(catégorie="chaîneNonTraduisible")
+      )
       idCol <- client$appeler(
         "tableaux.ajouterColonneTableau",
         list(idTableau=idTableau, idVariable=idVar)
       )
-      vals <- list()
-      vals[[idCol]] <- 123
-      él <- client$appeler(
+      idColC <- client$appeler(
+        "tableaux.ajouterColonneTableau",
+        list(idTableau=idTableau, idVariable=idVarC)
+      )
+      vals1 <- list()
+      vals1[[idCol]] <- 123
+
+      vals2 <- list()
+      vals2[[idCol]] <- 456
+      vals2[[idColC]] <- "abc"
+      print(list(vals1, vals2))
+
+      client$appeler(
         "tableaux.ajouterÉlément",
-        list(idTableau=idTableau, vals=vals)
+        list(idTableau=idTableau, vals=list(vals1, vals2))
       )
 
       donnéesTableau <- client$obtDonnéesTableau(idTableau = idTableau)
 
-      référence <- data.frame(colNumérique=123)
+      référence <- tibble::as_tibble(data.frame(colNumérique=c(123, 456), colTexte=c(NA, "abc")))
       names(référence)[names(référence) == "colNumérique"] <- idCol
+      names(référence)[names(référence) == "colTexte"] <- idColC
 
       testthat::expect_equal(donnéesTableau, référence)
     })

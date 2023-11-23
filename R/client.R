@@ -281,17 +281,9 @@ Client <- R6Class(
         "tableaux.suivreDonnéesExportation",
         paramètres = list(idTableau=idTableau, langues=langues)
       )
+      td <- donnéesTableauÀTrame(données["données"])
 
-      colonnes <- unique(unlist(sapply(données["données"][[1]], function (x) names(x))))
-      nRangées <- length(données["données"][[1]])
-
-      tableau_données <- data.frame(matrix(nrow=nRangées, ncol=length(colonnes)))
-      colnames(tableau_données) <- colonnes
-      for (colonne in colonnes) {
-        tableau_données[[colonne]] <- sapply(données["données"][[1]], function (x) x[[colonne]])
-      }
-      tableau_données <- tableau_données %>% replace(.=="NULL", NA)
-      return(tableau_données)
+      return(td)
     },
 
     fermer = function() {

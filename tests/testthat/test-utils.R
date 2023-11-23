@@ -20,3 +20,12 @@ testthat::test_that("Auto-détection type recherche", {
   résolu <- résoudreTypeFonction("rechercher.rechercherBdsSelonNom")
   testthat::expect_equal(résolu, "recherche")
 })
+
+testthat::test_that("Conversion données tableau", {
+  données <- jsonlite::fromJSON(
+    "{\"données\":[{\"col1\":123},{\"col2\":\"abc\",\"col1\":456}]}",
+    simplifyDataFrame = FALSE
+  )
+  td <- donnéesTableauÀTrame(données["données"])
+  testthat::expect_equal(td, tibble(col1=c(123, 456), col2=c(NA, "abc")))
+})
