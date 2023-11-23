@@ -132,7 +132,35 @@ avecClientEtServeurTest(
     })
 
     testthat::test_that("Obtenir données tableau", {
+      idBd <- client$appeler(
+        "bds.créerBd",
+        list(licence="ODbl-1_0")
+      )
+      idTableau <- client$appeler(
+        "bds.ajouterTableauBd",
+        list(idBd=idBd)
+      )
+      idVar <- client$appeler(
+        "variables.créerVariable",
+        list(catégorie="numérique")
+      )
+      idCol <- client$appeler(
+        "tableaux.ajouterColonneTableau",
+        list(idTableau=idTableau, idVariable=idVar)
+      )
+      vals <- list()
+      vals[[idCol]] <- 123
+      él <- client$appeler(
+        "tableaux.ajouterÉlément",
+        list(idTableau=idTableau, vals=vals)
+      )
 
+      donnéesTableau <- client$obtDonnéesTableau(idTableau = idTableau)
+
+      référence <- data.frame(colNumérique=123)
+      names(référence)[names(référence) == "colNumérique"] <- idCol
+
+      testthat::expect_equal(donnéesTableau, référence)
     })
 
     testthat::test_that("Obtenir données nuée", {

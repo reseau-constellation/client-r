@@ -5,7 +5,15 @@
 #' @returns Soit les paramètres eux-mêmes, soit, s'ils sont vides, un `data.frame` vide
 #'
 préparerParamsFoncMessage <- function(paramètres) {
-  return(if (is.null(paramètres)) data.frame() else paramètres)
+  if (is.null(paramètres)) {
+    return(data.frame())
+  }
+  # Important d'effacer les paramètres NULL, qui seront sinon formatés en `{}` dans json
+  if (length(paramètres)) {
+    paramètres[sapply(paramètres, is.null)] <- NULL
+  }
+
+  return(paramètres)
 }
 
 #' Prépare le nom d'une fonction Constellation à être envoyé par WebSocket
@@ -33,7 +41,6 @@ Client <- R6Class(
     écouteurs = list(),
     envoyerMessage = function(m) {
       messageJSON <- jsonlite::toJSON(m, auto_unbox=TRUE, dataframe = "columns")
-
       private$ws$send(messageJSON)
     },
     ws = NULL
@@ -120,7 +127,7 @@ Client <- R6Class(
       private$ws$connect()
       Sys.sleep(2)
 
-      retry::wait_until(isTRUE(ouvert), timeout = 15)
+      retry::wait_until(isTRUE(ouvert), timeout = 30)
       Sys.sleep(1)
 
     },
@@ -149,7 +156,7 @@ Client <- R6Class(
 
       private$envoyerMessage(messageAction)
 
-      retry::wait_until(isTRUE(résultatReçu), timeout = 15)
+      retry::wait_until(isTRUE(résultatReçu), timeout = 30)
 
       return(résultat)
     },
@@ -187,12 +194,12 @@ Client <- R6Class(
       )
 
       private$envoyerMessage(messageSuivi)
-      retry::wait_until(!is.null(fOublier), timeout = 15)
+      retry::wait_until(!is.null(fOublier), timeout = 30)
 
       if (appelléAvecFonction) {
         return(fOublier)
       } else {
-        retry::wait_until(condition(résultatSuivi), timeout = 15)
+        retry::wait_until(condition(résultatSuivi), timeout = 30)
         fOublier()
         return(résultatSuivi)
       }
@@ -232,12 +239,12 @@ Client <- R6Class(
       )
 
       private$envoyerMessage(messageSuivi)
-      retry::wait_until(!is.null(retour), timeout = 15)
+      retry::wait_until(!is.null(retour), timeout = 30)
 
       if (appelléAvecFonction) {
         return(retour)
       } else {
-        retry::wait_until(!is.null(résultatRecherche), timeout = 15)
+        retry::wait_until(!is.null(résultatRecherche), timeout = 30)
         retour$fOublier()
         return(résultatRecherche)
       }
@@ -267,6 +274,24 @@ Client <- R6Class(
 
     enregistrerÉcoute = function(id, résoudre, rejeter, f=NULL) {
       private$écouteurs[[id]] <- list(résoudre=résoudre, rejeter=rejeter, f=f)
+    },
+
+    obtDonnéesTableau = function(idTableau, langues=NULL) {
+      données <- self$suivre(
+        "tableaux.suivreDonnéesExportation",
+        paramètres = list(idTableau=idTableau, langues=langues)
+      )
+
+      colonnes <- unique(unlist(sapply(données["données"][[1]], function (x) names(x))))
+      nRangées <- length(données["données"][[1]])
+
+      tableau_données <- data.frame(matrix(nrow=nRangées, ncol=length(colonnes)))
+      colnames(tableau_données) <- colonnes
+      for (colonne in colonnes) {
+        tableau_données[[colonne]] <- sapply(données["données"][[1]], function (x) x[[colonne]])
+      }
+      tableau_données <- tableau_données %>% replace(.=="NULL", NA)
+      return(tableau_données)
     },
 
     fermer = function() {
