@@ -4,14 +4,12 @@
 \alias{lancerServeur}
 \title{Lancer un serveur Constellation local}
 \usage{
-lancerServeur(port = NULL, sfip = NULL, orbite = NULL, exe = "constl")
+lancerServeur(port = NULL, dossier = NULL, exe = "constl")
 }
 \arguments{
 \item{port}{Le numéro du port sur lequel le port sera connecté}
 
-\item{sfip}{Le dossier SFIP à utiliser (optionnel)}
-
-\item{orbite}{Le dossier du compte Constellation à utiliser (optionnel)}
+\item{dossier}{Le dossier du compte Constellation à utiliser (optionnel)}
 
 \item{exe}{La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard}
 }

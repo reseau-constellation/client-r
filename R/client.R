@@ -383,7 +383,7 @@ Client <- R6Class(
     },
 
     #' Fermer le client
-    #'
+    #' @return Rien
     fermer = function() {
       private$ws$close()
     }

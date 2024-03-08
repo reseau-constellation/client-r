@@ -266,6 +266,9 @@ Fermer le client
 \if{html}{\out{<div class="r">}}\preformatted{Client$fermer()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Rien
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ClientConstellation-clone"></a>}}
