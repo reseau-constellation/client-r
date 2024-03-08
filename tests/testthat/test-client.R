@@ -1,17 +1,13 @@
 avecClientEtServeurTest <- function(code) {
   id <- uuid::UUIDgenerate()
-  dossierBase <- file.path(tempdir(), id)
-
-  dossierOrbite <- file.path(dossierBase, "orbite")
-  dossierSFIP <- file.path(dossierBase, "sfip")
+  dossier <- file.path(tempdir(), id)
 
   # Effacer le dossier temporaire une fois qu'on a fini
-  on.exit(unlink(dossierBase, recursive = TRUE), add = TRUE)
+  on.exit(unlink(dossier, recursive = TRUE), add = TRUE)
 
   résultat <- constellationR::avecClientEtServeur(
     code,
-    orbite = dossierOrbite,
-    sfip = dossierSFIP,
+    dossier = dossier,
   )
   return(résultat)
 }

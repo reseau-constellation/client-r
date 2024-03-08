@@ -1,16 +1,12 @@
 avecServeurTest <- function(code, ...) {
   id <- uuid::UUIDgenerate()
-  dossierBase <- file.path(tempdir(), id)
-
-  dossierOrbite <- file.path(dossierBase, "orbite")
-  dossierSFIP <- file.path(dossierBase, "sfip")
+  dossier <- file.path(tempdir(), id)
 
   params <- list(...)
-  if (is.null(params$orbite)) params$orbite <- dossierOrbite
-  if (is.null(params$sfip)) params$sfip <- dossierSFIP
+  if (is.null(params$dossier)) params$dossier <- dossier
 
   # Effacer le dossier temporaire une fois qu'on a fini
-  on.exit(unlink(dossierBase, recursive = TRUE), add = TRUE)
+  on.exit(unlink(dossier, recursive = TRUE), add = TRUE)
 
   résultat <- do.call(
     constellationR::avecServeur,
@@ -50,22 +46,13 @@ testthat::test_that("lancer serveur port spécifié", {
   )
 })
 
-testthat::test_that("lancer serveur dossier orbite spécifié", {
-  dossierOrbite <- file.path(tempdir(), "monDossierOrbite")
+testthat::test_that("lancer serveur dossier Constellation spécifié", {
+  dossier <- file.path(tempdir(), "monDossierConstellation")
   avecServeurTest(
     function (port) {
-      testthat::expect_true(dir.exists(dossierOrbite))
+      testthat::expect_true(dir.exists(dossier))
     },
-    orbite = dossierOrbite
+    dossier = dossier
   )
 })
 
-testthat::test_that("lancer serveur dossier sfip spécifié", {
-  dossierSFIP <- file.path(tempdir(), "monDossierSFIP")
-  avecServeurTest(
-    function (port) {
-      testthat::expect_true(dir.exists(dossierSFIP))
-    },
-    sfip = dossierSFIP
-  )
-})

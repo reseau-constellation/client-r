@@ -38,14 +38,13 @@ installerConstellation <- function() {
 #'
 #' @param port Le numéro du port sur lequel le port sera connecté
 #' @param exe La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard
-#' @param sfip Le dossier SFIP à utiliser (optionnel)
-#' @param orbite Le dossier du compte Constellation à utiliser (optionnel)
+#' @param dossier Le dossier du compte Constellation à utiliser (optionnel)
 #'
 #' @return Le numéro de port sur lequel le le serveur écoute désormais, et une fonction à appeler pour fermer le serveur
 #' @export
 #'
 
-lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl") {
+lancerServeur <- function(port=NULL, dossier = NULL, exe = "constl") {
   # open /Applications/RStudio.app
   # https://community.rstudio.com/t/how-to-get-rstudio-ide-to-use-the-correct-terminal-path-in-mac-os-x/131528/6
 
@@ -58,11 +57,8 @@ lancerServeur <- function(port=NULL, sfip = NULL, orbite = NULL, exe = "constl")
   if (!is.null(port)) {
     commande <- c(commande, "--port", port)
   }
-  if (!is.null(sfip)) {
-    commande <- c(commande, "--doss-sfip", sfip)
-  }
-  if (!is.null(orbite)) {
-    commande <- c(commande, "--doss-orbite", orbite)
+  if (!is.null(dossier)) {
+    commande <- c(commande, "--dossier", dossier)
   }
 
   p <- processx::process$new(exe, commande, stdout = "|", stdin = "|", encoding = "UTF-8")
