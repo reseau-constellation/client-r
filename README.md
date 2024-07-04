@@ -78,7 +78,7 @@ constellationR::avecClientEtServeur(
 )
 ```
 
-C'est là même chose pour les fonctions de recherche :
+C'est la même chose pour les fonctions de recherche :
 
 ``` r
 library(constellationR)
@@ -132,12 +132,14 @@ library(constellationR)
 
 // Le numéro du port sur lequel vous avez lancé Constellation
 port <- 5003
+codeSecret <- "le code secret que le serveur vous a donnée afin de vous connecter"
 
 constellationR::avecClient(
   function(client) {
     // Faire quelque chose avec le client...
   },
-  port = port
+  port = port,
+  codeSecret = codeSecret
 )
 
 ```

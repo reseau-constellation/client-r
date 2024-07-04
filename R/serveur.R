@@ -12,26 +12,13 @@ obtVersionServeur <- function(exe = "constl") {
   return(version)
 }
 
-#' Obtenir la version installée de l'IPA Constellation
-#'
-#' @param exe La commande pour lancer Constellation. Uniquement nécessaire pour une installation de Constellation non standard
-#'
-#' @return La version de l'IPA Constellation
-#' @export
-#'
-
-obtVersionIPAConstellation <- function(exe = "constl") {
-  version <- system2(exe, c("v-constl"), stdout = TRUE)
-  return(version)
-}
-
 #' Installer Constellation sur votre système. Nécessite Node.js (https://nodejs.org/fr) et pnpm (https://pnpm.io/)
 #'
 #' @return Rien
 #' @export
 
 installerConstellation <- function() {
-  system2("pnpm", c("i", "--global", "@constl/ipa", "@constl/serveur"), stdout = TRUE)
+  system2("curl", c("https://raw.githubusercontent.com/reseau-constellation/serveur-ws/principale/installer.cjs", "|", "node", "-"), stdout = TRUE)
 }
 
 #' Lancer un serveur Constellation local
@@ -69,6 +56,7 @@ lancerServeur <- function(port=NULL, dossier = NULL, exe = "constl") {
     p$poll_io(5000)
 
     résultat <- p$read_output_lines()
+
     if (!length(résultat)) {break}
 
     for (l in length(résultat)) {
@@ -81,22 +69,24 @@ lancerServeur <- function(port=NULL, dossier = NULL, exe = "constl") {
 
         if (messageMachine$type == "NŒUD PRÊT") {
           portFinal <- as.numeric(messageMachine$port)
+          codeSecret <- messageMachine$codeSecret
           break
         }
       }
     }
   }
 
-  if (is.null(portFinal)) {
+  if (is.null(portFinal) || is.null(codeSecret)) {
     stop("Serveur mal initialisé.")
   }
+
   fermer <- function() {
-    p$write_input("\n", sep = "\n")
+    p$write_input("\n", sep="\n")
     p$wait(2)
     p$kill()
   }
 
-  return(list(port=portFinal, fermer=fermer))
+  return(list(port=portFinal, codeSecret=codeSecret, fermer=fermer))
 }
 
 #' Exécuter du code dans le contexte d'un serveur Constellation, et fermer le serveur par la suite.
@@ -111,7 +101,7 @@ avecServeur <- function(code, ...) {
   serveur <- lancerServeur(...)
   résultat <- tryCatch(
     {
-      code(serveur$port)
+      code(serveur$port, serveur$codeSecret)
     },
     error = function(cond) {
       message(cond)

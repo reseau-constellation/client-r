@@ -23,23 +23,18 @@ testthat::test_that("obtenir version serveur", {
   expect_equal(length(strsplit(version, "\\.")[[1]]), 3)
 })
 
-testthat::test_that("obtenir version ipa", {
-  version <- constellationR::obtVersionIPAConstellation()
-  expect_equal(length(strsplit(version, "\\.")[[1]]), 3)
-})
-
-
 testthat::test_that("lancer serveur", {
   avecServeurTest(
-    function(port) {
+    function(port, codeSecret) {
       expect_equal(class(port), "numeric")
+      expect_equal(class(codeSecret), "character")
     }
   )
 })
 
 testthat::test_that("lancer serveur port spécifié", {
   avecServeurTest(
-    function(port) {
+    function(port, codeSecret) {
       expect_equal(port, 5123)
     },
     port=5123
@@ -49,8 +44,12 @@ testthat::test_that("lancer serveur port spécifié", {
 testthat::test_that("lancer serveur dossier Constellation spécifié", {
   dossier <- file.path(tempdir(), "monDossierConstellation")
   avecServeurTest(
-    function (port) {
-      testthat::expect_true(dir.exists(dossier))
+    function (port, codeSecret) {
+      retry::wait_until(
+        dir.exists(dossier),
+        timeout = 5
+     )
+     testthat::expect_true(dir.exists(dossier))
     },
     dossier = dossier
   )

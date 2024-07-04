@@ -48,19 +48,31 @@ Client <- R6Class(
   public = list(
     #'
     #' @param port Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.
+    #' @param codeSecret Le code secret pour pouvoir se connecter au serveur.
     #'
     initialize = function(
-      port
+      port,
+      codeSecret=NULL
     ) {
       Sys.sleep(2)
-      private$ws <- websocket::WebSocket$new(paste("ws://localhost:", as.character(port), sep=""), autoConnect = FALSE)
+
+      if (is.null(codeSecret)) {
+        requèteCode <- httr2::request(paste("http://localhost/demande?id=Client R ", as.character(sample(1000:9999, 1)[1]), as.character(port), sep=""))
+        réponse <- httr2::req_perform(requèteCode)
+        codeSecret <- httr2::resp_body_string(réponse)
+      }
+      urlWs <- paste("ws://localhost:", as.character(port), "?code=", utils::URLencode(codeSecret), sep="")
+      print(urlWs)
+      private$ws <- websocket::WebSocket$new(urlWs, autoConnect = FALSE)
 
       ouvert <- FALSE
       private$ws$onOpen(function(event) {
+        print("ws ouverte")
         ouvert <<- TRUE
       })
 
       private$ws$onMessage(function(event) {
+        print(event$data)
         m <- jsonlite::fromJSON(event$data, simplifyDataFrame = FALSE)
         écouteur <- private$écouteurs[[m$id]]
         if (is.null(écouteur)) {
@@ -126,7 +138,9 @@ Client <- R6Class(
       })
 
       Sys.sleep(1)
+      print("on va connecter")
       private$ws$connect()
+      print("on est connecté")
       Sys.sleep(2)
 
       retry::wait_until(isTRUE(ouvert), timeout = 30)
@@ -400,10 +414,11 @@ Client <- R6Class(
 
 avecClientEtServeur <- function(code, ...) {
   résultat <- avecServeur(
-    function(port) {
+    function(port, codeSecret) {
       résultatClient <- avecClient(
         code,
-        port
+        port,
+        codeSecret
       )
 
       return(résultatClient)
@@ -420,12 +435,13 @@ avecClientEtServeur <- function(code, ...) {
 #'
 #' @param code Le code à exécuter. Ce code doit être une fonction qui prend le `client` Constellation comme unique paramètre.
 #' @param port Le port du serveur déjà ouvert.
+#' @param codeSecret Le code secret pour se connecter au serveur.
 #'
 #' @return Le résultat de la fonction `code`.
 #' @export
 
-avecClient <- function(code, port) {
-  client <- Client$new(port)
+avecClient <- function(code, port, codeSecret) {
+  client <- Client$new(port, codeSecret)
   résultatClient <- tryCatch(
     {
       code(client)

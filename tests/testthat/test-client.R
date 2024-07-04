@@ -4,7 +4,6 @@ avecClientEtServeurTest <- function(code) {
 
   # Effacer le dossier temporaire une fois qu'on a fini
   on.exit(unlink(dossier, recursive = TRUE), add = TRUE)
-
   résultat <- constellationR::avecClientEtServeur(
     code,
     dossier = dossier,
@@ -15,7 +14,6 @@ avecClientEtServeurTest <- function(code) {
 
 avecClientEtServeurTest(
   function (client) {
-
     testthat::test_that("Actions", {
       idCompte <- client$action("obtIdCompte")
       testthat::expect_equal(class(idCompte), "character")
@@ -221,3 +219,4 @@ avecClientEtServeurTest(
     })
   }
 )
+

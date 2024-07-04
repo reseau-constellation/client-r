@@ -20,10 +20,11 @@ Imports:
     processx,
     dplyr,
     tibble,
+    httr2,
 Language: fr
 Encoding: UTF-8
 LazyData: true  
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

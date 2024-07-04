@@ -28,13 +28,15 @@ s'occuperont de la création et de la fermeture du client pour vous.
 \if{latex}{\out{\hypertarget{method-ClientConstellation-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Client$new(port)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Client$new(port, codeSecret = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{port}}{Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.
+\item{\code{port}}{Le numéro du port local sur lequel le serveur est ouvert, et auquel le client se connectera.}
+
+\item{\code{codeSecret}}{Le code secret pour pouvoir se connecter au serveur.
 
 Fonction pour invoquer un action sur Constellation.}
 }
