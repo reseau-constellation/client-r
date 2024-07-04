@@ -61,18 +61,16 @@ Client <- R6Class(
         réponse <- httr2::req_perform(requèteCode)
         codeSecret <- httr2::resp_body_string(réponse)
       }
+
       urlWs <- paste("ws://localhost:", as.character(port), "?code=", utils::URLencode(codeSecret), sep="")
-      print(urlWs)
       private$ws <- websocket::WebSocket$new(urlWs, autoConnect = FALSE)
 
       ouvert <- FALSE
       private$ws$onOpen(function(event) {
-        print("ws ouverte")
         ouvert <<- TRUE
       })
 
       private$ws$onMessage(function(event) {
-        print(event$data)
         m <- jsonlite::fromJSON(event$data, simplifyDataFrame = FALSE)
         écouteur <- private$écouteurs[[m$id]]
         if (is.null(écouteur)) {
@@ -129,18 +127,18 @@ Client <- R6Class(
           stop(paste('Type de message non reconnnu :', m$type, sep=''))
         }
       })
+
       private$ws$onClose(function(event) {
-        cat("Client disconnected with code ", event$code,
-            " and reason ", event$reason, "\n", sep = "")
-      })
-      private$ws$onError(function(event) {
-        cat("Client failed to connect: ", event$message, "\n")
+        cat("Le client s'est déconnecté avec le code ", event$code,
+            " et la raison ", event$reason, "\n", sep = "")
       })
 
-      Sys.sleep(1)
-      print("on va connecter")
+      private$ws$onError(function(event) {
+        cat("Le client n'a pas pu se connecter : ", event$message, "\n")
+      })
+
+      Sys.sleep(2)
       private$ws$connect()
-      print("on est connecté")
       Sys.sleep(2)
 
       retry::wait_until(isTRUE(ouvert), timeout = 30)
