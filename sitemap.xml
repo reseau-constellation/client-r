@@ -1,60 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/404.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/index.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/Client.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/avecClient.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/avecClientEtServeur.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/avecServeur.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/donn-esNu-e-Trame.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/donn-esTableau-Trame.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/installerConstellation.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/lancerServeur.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/obtVersionServeur.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/pr-parerNomFoncMessage.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/pr-parerParamsFoncMessage.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/r-soudreNomFonction.html</loc>
-  </url>
-  <url>
-    <loc>https://reseau-constellation.github.io/client-r/reference/r-soudreTypeFonction.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://reseau-constellation.github.io/client-r/404.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/LICENSE.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/authors.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/index.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/news/index.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/Client.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/avecClient.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/avecClientEtServeur.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/avecServeur.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/donn-esNu-e-Trame.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/donn-esTableau-Trame.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/index.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/installerConstellation.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/lancerServeur.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/obtVersionServeur.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/pr-parerNomFoncMessage.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/pr-parerParamsFoncMessage.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/r-soudreNomFonction.html</loc></url>
+<url><loc>https://reseau-constellation.github.io/client-r/reference/r-soudreTypeFonction.html</loc></url>
 </urlset>
+
