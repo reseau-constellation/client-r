@@ -57,12 +57,13 @@ Client <- R6Class(
       Sys.sleep(2)
 
       if (is.null(codeSecret)) {
-        requèteCode <- httr2::request(paste("http://localhost/demande?id=Client R ", as.character(sample(1000:9999, 1)[1]), as.character(port), sep=""))
+        requèteCode <- httr2::request(paste("http://localhost:", as.character(port), "/demande?id=Client R ", as.character(sample(1000:9999, 1)[1])), sep="")
         réponse <- httr2::req_perform(requèteCode)
         codeSecret <- httr2::resp_body_string(réponse)
       }
 
-      urlWs <- paste("ws://localhost:", as.character(port), "?code=", utils::URLencode(codeSecret), sep="")
+      urlWs <- paste("ws://localhost:", as.character(port), "/?code=", utils::URLencode(codeSecret), sep="")
+      print(urlWs)
       private$ws <- websocket::WebSocket$new(urlWs, autoConnect = FALSE)
 
       ouvert <- FALSE
@@ -72,20 +73,20 @@ Client <- R6Class(
 
       private$ws$onMessage(function(event) {
         m <- jsonlite::fromJSON(event$data, simplifyDataFrame = FALSE)
-        écouteur <- private$écouteurs[[m$id]]
+        écouteur <- private$écouteurs[[m$idRequête]]
         if (is.null(écouteur)) {
           return()
         }
         if (m$type == 'action') {
           écouteur$résoudre(m$résultat)
-          private$écouteurs[[m$id]] <- NULL
+          private$écouteurs[[m$idRequête]] <- NULL
         } else if (m$type == 'suivrePrêt') {
           if (is.null(m$fonctions)){
             écouteur$résoudre(function() {
-              private$écouteurs[[m$id]] <- NULL
+              private$écouteurs[[m$idRequête]] <- NULL
               messageOublierSuivi <- list(
                 type='retour',
-                id=m$id,
+                idRequête=m$idRequête,
                 fonction="fOublier"
               )
               private$envoyerMessage(messageOublierSuivi)
@@ -96,10 +97,10 @@ Client <- R6Class(
             for (fonc in m$fonctions) {
               if (fonc == 'fOublier') {
                 fonctions[[fonc]] <- function() {
-                  private$écouteurs[[m$id]] <- NULL
+                  private$écouteurs[[m$idRequête]] <- NULL
                   messageOublierSuivi <- list(
                     type='retour',
-                    id=m$id,
+                    idRequête=m$idRequête,
                     fonction="fOublier"
                   )
                   private$envoyerMessage(messageOublierSuivi)
@@ -108,7 +109,7 @@ Client <- R6Class(
                 fonctions[[fonc]] <- function(...) {
                   messageF <- list(
                     type='retour',
-                    id=m$id,
+                    idRequête=m$idRequête,
                     fonction=fonc,
                     args=list(...)
                   )
@@ -122,7 +123,7 @@ Client <- R6Class(
           écouteur$f(m$données)
         } else if (m$type == 'erreur') {
           écouteur$rejeter(m$erreur)
-          private$écouteurs[[m$id]] <- NULL
+          private$écouteurs[[m$idRequête]] <- NULL
         } else {
           stop(paste('Type de message non reconnnu :', m$type, sep=''))
         }
@@ -158,7 +159,7 @@ Client <- R6Class(
     action = function(fonction, paramètres = NULL, patience = 15) {
       nomFonction <- résoudreNomFonction(fonction)
 
-      id <- uuid::UUIDgenerate()
+      idRequête <- uuid::UUIDgenerate()
 
       résultat <- NULL
       résultatReçu <- FALSE
@@ -168,11 +169,11 @@ Client <- R6Class(
       }
       fErreur <- function(erreur) {stop(paste("Il y a eu une erreur :", nomFonction, "paramètres", paramètres, erreur))}
 
-      self$enregistrerÉcoute(id, résoudre=fÉcoute, rejeter=fErreur)
+      self$enregistrerÉcoute(idRequête, résoudre=fÉcoute, rejeter=fErreur)
 
       messageAction <- list(
         type='action',
-        id=id,
+        idRequête=idRequête,
         fonction=préparerNomFoncMessage(nomFonction),
         args=préparerParamsFoncMessage(paramètres)
       )
@@ -203,7 +204,7 @@ Client <- R6Class(
     #'
     suivre = function(fonction, paramètres = NULL, nomArgFonction='f', condition=function(x) !is.null(x), patience = 15) {
       nomFonction <- résoudreNomFonction(fonction)
-      id <- uuid::UUIDgenerate()
+      idRequête <- uuid::UUIDgenerate()
 
       fOublier <- NULL
       résoudre <- function(f) {
@@ -223,11 +224,11 @@ Client <- R6Class(
         }
       }
 
-      self$enregistrerÉcoute(id, résoudre = résoudre, rejeter = fErreur, f = f)
+      self$enregistrerÉcoute(idRequête, résoudre = résoudre, rejeter = fErreur, f = f)
 
       messageSuivi <- list(
         type="suivre",
-        id=id,
+        idRequête=idRequête,
         fonction=préparerNomFoncMessage(nomFonction),
         args=préparerParamsFoncMessage(paramètres),
         nomArgFonction=nomArgFonction
@@ -264,7 +265,7 @@ Client <- R6Class(
     #'
     rechercher = function(fonction, paramètres, nomArgFonction = "f", patience = 15) {
       nomFonction <- résoudreNomFonction(fonction)
-      id <- uuid::UUIDgenerate()
+      idRequête <- uuid::UUIDgenerate()
 
       retour <- NULL
       résoudre <- function(f) {
@@ -284,11 +285,11 @@ Client <- R6Class(
         }
       }
 
-      self$enregistrerÉcoute(id, résoudre = résoudre, rejeter = fErreur, f = f)
+      self$enregistrerÉcoute(idRequête, résoudre = résoudre, rejeter = fErreur, f = f)
 
       messageSuivi <- list(
         type="suivre",
-        id=id,
+        idRequête=idRequête,
         fonction = préparerNomFoncMessage(nomFonction),
         args = préparerParamsFoncMessage(paramètres),
         nomArgFonction = nomArgFonction
@@ -343,13 +344,13 @@ Client <- R6Class(
 
     #' Méthode privée. Touche pas.
     #'
-    #' @param id Identifiant unique
+    #' @param idRequête Identifiant unique
     #' @param résoudre Fonction résolution
     #' @param rejeter Fonction rejet
     #' @param f Fonction de suivi
     #'
-    enregistrerÉcoute = function(id, résoudre, rejeter, f=NULL) {
-      private$écouteurs[[id]] <- list(résoudre=résoudre, rejeter=rejeter, f=f)
+    enregistrerÉcoute = function(idRequête, résoudre, rejeter, f=NULL) {
+      private$écouteurs[[idRequête]] <- list(résoudre=résoudre, rejeter=rejeter, f=f)
     },
 
     #' Fonction rapide pour obtenir des données d'un tableau en format tibble

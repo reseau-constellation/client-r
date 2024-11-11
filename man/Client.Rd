@@ -186,13 +186,13 @@ Méthode privée. Touche pas.
 \if{latex}{\out{\hypertarget{method-ClientConstellation-enregistrerÉcoute}{}}}
 \subsection{Method \code{enregistrerÉcoute()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Client$enregistrerÉcoute(id, résoudre, rejeter, f = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Client$enregistrerÉcoute(idRequête, résoudre, rejeter, f = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{id}}{Identifiant unique}
+\item{\code{idRequête}}{Identifiant unique}
 
 \item{\code{résoudre}}{Fonction résolution}
 
