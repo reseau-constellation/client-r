@@ -63,7 +63,6 @@ Client <- R6Class(
       }
 
       urlWs <- paste("ws://localhost:", as.character(port), "/?code=", utils::URLencode(codeSecret), sep="")
-      print(urlWs)
       private$ws <- websocket::WebSocket$new(urlWs, autoConnect = FALSE)
 
       ouvert <- FALSE
