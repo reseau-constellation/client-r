@@ -39,7 +39,8 @@ jobs:
         with:
           version: latest
 
-      - run: pnpm add -g @constl/ipa @constl/serveur
+      - name: Installer le serveur local Constellation
+        run: curl https://raw.githubusercontent.com/reseau-constellation/serveur-ws/principale/installer.cjs | node -
 
       - uses: r-lib/actions/setup-pandoc@v2
 
